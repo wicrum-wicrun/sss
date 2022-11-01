@@ -1,0 +1,9 @@
+:~  title+'SSS'
+    info+'Solid state subscriptions prototyping.'
+    color+0x11.8c4f
+    site+/apps/sss
+    base+'sss'
+    version+[0 0 1]
+    website+'https://urbit.org'
+    license+'AGPL'
+==
