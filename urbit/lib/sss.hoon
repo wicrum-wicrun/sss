@@ -2,23 +2,6 @@
 ::
 |*  [pub=(lake) sub=(lake)]
 |%
-++  adit
-  |*  [=wire =(lake)]
-  %+  slap  !>([lake=lake ..zuse])
-  ^-  spec
-  :-  %ktcl
-  :-  %bccl
-  :~  :-  %bccl
-      ;;  (lest spec)
-      %-  snoc  :_  base/%null
-      %+  turn  wire
-      |=  =term
-      ^-  spec
-      [%leaf %tas `@`term]
-  ::
-      [%like ~[%rock] ~[~[%lake]]]
-  ==
-::
 ++  agent
   $_  ^|
   |_  =bowl:agent:gall
@@ -34,10 +17,6 @@
   ++  on-arvo   |~  [wire sign-arvo]            *(quip card _^|(..on-init))
   ++  on-fail   |~  [term tang]                 *(quip card _^|(..on-init))
   --
-+$  act
-  $%  [%on-init *]
-      [%on-watch path]
-  ==
 ::
 +$  card  (wind note gift)
 +$  note
@@ -150,7 +129,6 @@
       +*  ag    ~(. agent bowl)
       ++  this  .
       ++  emit  |=(=card:agent:gall this(cards [card cards]))
-::    ++  emil  |=(cs=_cards this(cards (weld cs cards)))  ::TODO roll?
       ++  abet  [(flop cards) state]
       ::
       ++  run
@@ -167,7 +145,7 @@
           %-  emit
           :*  %pass   (zoom response/pine/(scot %p src.bowl)^from.req^path.req)
               %agent  [src.bowl from.req]
-              %poke   :-  %sss-response  !> ::  ^-  response:poke
+              %poke   :-  %sss-response  !>
               =/  last  pine:(~(gut by endo) path.req *tide)
               [%pine dap.bowl aeon.last path.req rock.last]
           ==
@@ -181,21 +159,11 @@
             |=  =tide
             %=    tide
                 wait
-              (put:wait wait.tide aeon.req *(set [ship dude]))
+              %^  put:wait  wait.tide  aeon.req
+              %-  ~(put in (fall (get:wait wait.tide aeon.req) ~))
+              [src.bowl from.req]
             ==
           ==
-        ==
-      ::
-      ++  enqueue
-        |=  [=dude =path aeon=@ud]
-        ^+  endo
-        %+  ~(jab by endo)  path
-        |=  =tide
-        %=    tide
-            wait
-          %^  put:wait  wait.tide  aeon
-          %-  ~(put in (fall (get:wait wait.tide aeon) ~))
-          [src.bowl dude]
         ==
       ::
       ++  respond-scry
@@ -204,8 +172,7 @@
         %-  emit
         :*  %pass   (zoom response/scry/(scot %p ship)^dude^(scot %ud aeon)^path)
             %agent  [ship dude]
-            %poke   :-  %sss-response  !> ::  ^-  response:poke
-            [%scry dap.bowl aeon path wave]
+            %poke   sss-response/!>([%scry dap.bowl aeon path wave])
         ==
       ::
       ++  response
@@ -238,13 +205,14 @@
         ^+  this
         =/  =tide  (~(gut by endo) path *tide)
         =/  next  +(key:(fall (pry:book book.tide) [key=0 value=*wave:pub]))
-        =^  waiting=(unit (set (pair ship dude)))  wait.tide  (del:wait wait.tide next)
-        =.  endo  (~(put by endo) path tide(book (put:book book.tide next wave)))
+        =^  waiting  wait.tide  (del:wait wait.tide next)
+        =.  endo
+          (~(put by endo) path tide(book (put:book book.tide next wave)))
         ?~  waiting  this
         %-  ~(rep in u.waiting)
         |=  [[=ship =dude] =_this]
         ^+  this
-        (respond-scry:this ship wave dude path next) ::TODO does this really work?
+        (respond-scry:this ship wave dude path next) ::TODO does this work?
       ::
       ++  output
         |=  cs=(list card)
