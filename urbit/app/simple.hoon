@@ -55,15 +55,19 @@
   ==
 ::
 ++  on-agent  _`this
-++  on-wave
-  |=  [=rock:in wave=(unit wave:in)]
-  =-  ?~  wave  -
-      ?>  =(-.rock -.u.wave)
-      -
+++  on-rock
+  |=  =rock:in
   ?-    -.rock
       [%foo %bar ~]
-    ~&  >
-      "received rock {<rock>} and wave {<wave>}"
+    ~&  >  "received rock {<rock>}"
+    `this
+  ==
+::
+++  on-wave
+  |=  [=rock:in =wave:in]
+  ?-    -.rock
+      [%foo %bar ~]
+    ~&  >  "received rock {<rock>} and wave {<wave>}"
     `this
   ==
 ::
