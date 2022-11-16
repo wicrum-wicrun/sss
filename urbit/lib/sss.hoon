@@ -99,6 +99,25 @@
         %sss-response
       =^  cards  state  abet:(response:handler !<((response:poke sub) vase))
       [cards this]
+    ::
+        %sss-solidify
+      :-  ~
+      =/  =path  !<(path vase)
+      %=  this  endo
+        %+  ~(put by endo)  path
+        =/  =tide  (~(got by endo) path)
+        =^  last  rok.tide  (pop:rok rok.tide)
+        =^  next  wav.tide
+          %^    (dip:(wav pub) ,[aeon rock:pub])
+              (lot:(wav pub) wav.tide `-.last ~)
+            last
+          |=  [[aeon =rock:pub] [=aeon =wave:pub]]
+          ^-  [(unit wave:pub) ? [^aeon rock:pub]]
+          [~ | aeon (wash:pub rock wave)]
+        %=  tide  rok
+          (put:rok +<-:put:rok next)
+        ==
+      ==
     ==
   ++  on-watch
     |=  path
@@ -279,7 +298,9 @@
             %+  ~(put by endo)  path.p.card
             =/  =tide  (~(gut by endo) path.p.card *tide)
             =/  next
-              +(key:(fall (ram:(wav pub) wav.tide) *[=key val]:(wav pub)))
+              .+  %+  max  
+                (fall (bind (pry:rok rok.tide) head) 0)
+              (fall (bind (ram:(wav pub) wav.tide) head) 0)
             =/  last=[=aeon =rock:pub]  (fall (pry:rok rok.tide) *[key val]:rok)
             =.  wav.tide  (put:(wav pub) wav.tide next wave.p.card)
             ?.  =(next (add aeon.last waves.rul.tide))  tide
