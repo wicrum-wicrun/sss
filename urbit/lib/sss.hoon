@@ -101,6 +101,7 @@
       [cards this]
     ::
         %sss-solidify
+      ?>  =(src our):bowl
       :-  ~
       =/  =path  !<(path vase)
       %=  this  endo
