@@ -229,11 +229,12 @@ decouples code from data and is one important step towards purely functional
 agents.
 
 ### Subscribing to subpaths
-Let's say we have the following `$wave` as part of the incoming interface:
+Let's say we have the following `$wave` as part of the incoming interface for a
+chat application:
 
 ```hoon
 +$  wave
-  $%  [[%chats ~] cord]
+  $%  [[%chats ~] @p @da cord]
   ==
 ```
 
@@ -244,7 +245,7 @@ interface declaration by changing the terminator from a `~` to a `*`:
 
 ```hoon
 +$  wave
-  $%  [[%chats *] cord]
+  $%  [[%chats *] @p @da cord]
   ==
 ```
 
