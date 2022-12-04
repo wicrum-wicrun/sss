@@ -34,7 +34,7 @@
 %-  mk-agent:sss
 ^-  agent:sss
 ::
-|_  =bowl:gall
+|_  [=bowl:gall pub=(map path rock:out) sub=(map [ship term path] rock:in)]
 +*  this  .
 ::
 ++  on-init  `this

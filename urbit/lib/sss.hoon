@@ -4,7 +4,7 @@
 |%
 ++  agent
   $_  ^|
-  |_  =bowl:agent:gall
+  |_  [bowl:agent:gall (map path rock:pub) (map [ship dude path] rock:sub)]
   ++  on-init                               *(quip card _^|(..on-init))
   ++  on-save                               *vase
   ++  on-load   |~  vase                    *(quip card _^|(..on-init))
@@ -67,7 +67,7 @@
   |^
   ^-  agent:gall
   |_  =bowl:gall
-  +*  ag       ~(. agent bowl)
+  +*  ag       ~(. agent bowl inject-endo inject-exo)
       this     .
       handler  ~(sss-engine hc bowl)
   ::
@@ -158,6 +158,17 @@
     [cards this]
   ::
   --
+  ++  inject-endo
+    ^-  (map path rock:pub)
+    %-  ~(run by endo)
+    |=  =tide
+    val:(fall (pry:rok rok.tide) *[key =val]:rok)
+  ::
+  ++  inject-exo
+    ^-  (map [ship dude path] rock:sub)
+    %-  ~(run by exo)
+    |=  =flow
+    rock.rok.flow
   ::
   ++  hc
     |_  =bowl:gall
@@ -202,7 +213,7 @@
     ::
     ++  sss-engine
       |_  cards=(list card:agent:gall)
-      +*  ag    ~(. agent bowl)
+      +*  ag    ~(. agent bowl inject-endo inject-exo)
       ++  this  .
       ++  emit  |=(=card:agent:gall this(cards [card cards]))
       ++  emil
