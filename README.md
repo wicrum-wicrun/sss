@@ -9,17 +9,17 @@ If something seems wrong, dumb, or just overly tedious, it might be an error,
 but it could also be intentionally stripped down to allow us to focus on the
 core issues. But please give me feedback on everything anyway! Barring
 significant negative feedback, the core programming model used inside agents is
-expected to be refined but not fundamentally change, so now is your chance.
+expected to be refined but not fundamentally changed, so now is your chance.
 
 Below follows a description of how the current prototype is used, as well as a
-discussion on how SSS are likely to evolve.
+discussion on how SSS is likely to evolve.
 
 ## The big picture
 *(Skip this if you already know what and why SSS is.)*
 
 SSS is intended to function as a *state replication system*. Agent A has a
 piece of mutable state it wants to make available to its subscribers, and the
-subscribers should be able to keep in sync with minimal work.
+subscribers should be able to keep in sync minimal work.
 
 There exist two obvious solutions to this problem. First, Agent A could achieve
 this by sending out the entire state every time it changes, but this is
@@ -35,8 +35,9 @@ SSS is how we plan to implement the second solution in kernelspece, reducing
 code overhead, network load and memory usage at the same time.
 
 ## Usage
-To use this prototype, define a core of the type `$agent:sss`. This is very
-similar to a normal `$agent:gall`, and we will go through the differences
+To use this prototype, define a core of the type `$agent:sss` and pass it to
+the gate `+mk-agent:sss`. An `$agent:sss` is very similar to a normal
+`$agent:gall`, and we will go through the differences
 below, but for reference the complete definition is available in
 [`/lib/sss/hoon`](/urbit/lib/sss.hoon).
 
@@ -47,8 +48,8 @@ throughout this explanation.
 ### Interface declaration: `$lake`
 In order for your agent to be able to publish or subscribe to anything, the SSS
 system needs two interface declaration cores, one for incoming subscriptions and
-one for outgoing publications. Ideally these should be passed more like marks,
-but currently they are simply arguments to a wrapper:
+one for outgoing publications. Ideally these should be referenced kind of like
+marks, but currently they are simply arguments to `+sss`:
 
 ```hoon
 /+  sss
@@ -65,7 +66,7 @@ Both of these cores need to have the type `$lake` (found in
 below.
 
 ### Outgoing publications
-Here is the outgoing interface declared by `%simple`, a simple reverse-order
+Here is `%simple`'s outgoing interface, which declares a simple reverse-order
 append-only text log:
 
 ```hoon
@@ -74,9 +75,9 @@ append-only text log:
   +$  rock  (list cord)
   +$  wave  cord
   ++  wash
-    |=  [xs=(list cord) x=cord]
-    ^+  xs
-    [x xs]
+    |=  [rok=rock wav=wave]
+    ^+  rok
+    [wav rok]
   --
 ```
 
@@ -169,7 +170,7 @@ The `$rock` in the above snippet was most likely generated automatically by the
 subscriber's SSS system by running `(wash prev-rock wave)`. But in some cases,
 the subscriber may not be able to get up to date by simply downloading `$wave`s,
 and instead has to request a *snapshot* `$rock` from the publisher, and then use
-all waves after that to catch up. When this happens, the first `$rock` will not
+all subsequent waves to catch up. When this happens, the first `$rock` will not
 be accompanied by any wave, so instead the `+on-rock` arm will be used:
 
 ```hoon
@@ -206,9 +207,11 @@ isn't ideal.
 But note that at the moment, there is **only one outgoing publication state
 type**, i.e. even though the agent can publish different states on many
 different paths, all of these states have to be of the same type. This is
-obviously not enough for many real-world use cases, but even though adding
-support for more state types wouldn't be very difficult, this isn't a priority
-given that the current interface declaration format isn't expected to remain.
+obviously not enough for many real-world use cases, but given that the current
+interface declaration format isn't expected to remain, support for multiple
+state types hasn't been a priority. Let me know if you really need this to test
+your app!
+
 
 ### State replication
 So far, the subscriber has only had access to the replicated state in the
@@ -240,7 +243,7 @@ chat application:
 
 This is quite restrictive. Since the path in the type is declared explicitly
 and statically, we can only ever subscribe to a single path, `/chats`. We can
-make is possible to subscribe to dynamic paths while maintaining a static
+make it possible to subscribe to dynamic paths while maintaining a static
 interface declaration by changing the terminator from a `~` to a `*`:
 
 ```hoon

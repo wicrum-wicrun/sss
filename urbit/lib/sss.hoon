@@ -288,8 +288,8 @@
             =^  wave  wav.flow  (del:(wav sub) wav.flow +(aeon.rok.flow))
             ?~  wave  this(exo (~(put by exo) [src.bowl from.res &5.res] flow))
             =/  =rock:sub  (wash:sub rock.rok.flow u.wave)
-            =^  cards  agent  (on-rock:ag from.res rock)
             =^  cards  agent  (on-wave:ag from.res rock u.wave)
+            =^  cards  agent  (on-rock:ag from.res rock)
             $(this (output cards), rok.flow [+(aeon.rok.flow) rock])
           ==
         ==

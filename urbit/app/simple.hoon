@@ -21,9 +21,9 @@
     +$  rock  (list cord)
     +$  wave  cord
     ++  wash
-      |=  [xs=(list cord) x=cord]
-      ^+  xs
-      [x xs]
+      |=  [rok=rock wav=wave]
+      ^+  rok
+      [wav rok]
     --
   --
 ::
