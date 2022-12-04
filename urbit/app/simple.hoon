@@ -4,7 +4,7 @@
   |%
   ++  in
     |%
-    ++  rock
+    +$  rock
       $%  [[%foo %bar ~] (list cord)]
       ==
     +$  wave
@@ -18,8 +18,8 @@
     --
   ++  out
     |%
-    ++  rock  (list cord)
-    ++  wave  cord
+    +$  rock  (list cord)
+    +$  wave  cord
     ++  wash
       |=  [xs=(list cord) x=cord]
       ^+  xs
@@ -34,7 +34,7 @@
 %-  mk-agent:sss
 ^-  agent:sss
 ::
-|_  [=bowl:gall pub=(map path rock:out) sub=(map [ship term path] rock:in)]
+|_  [=bowl:gall pub=(map path rock:out) sub=(map [ship dude:gall path] rock:in)]
 +*  this  .
 ::
 ++  on-init  `this
