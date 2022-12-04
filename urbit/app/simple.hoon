@@ -56,18 +56,19 @@
 ::
 ++  on-agent  _`this
 ++  on-rock
-  |=  =rock:in
+  |=  [=dude:gall =rock:in]
   ?-    -.rock
       [%foo %bar ~]
-    ~&  >  "received rock {<rock>}"
+    ~&  >  "received rock {<rock>} from {<dude>} on {<src.bowl>}"
     `this
   ==
 ::
 ++  on-wave
-  |=  [=rock:in =wave:in]
+  |=  [=dude:gall =rock:in =wave:in]
   ?-    -.rock
       [%foo %bar ~]
-    ~&  >  "received rock {<rock>} and wave {<wave>}"
+    ~&  >
+      "received rock {<rock>} and wave {<wave>} from {<dude>} on {<src.bowl>}"
     `this
   ==
 ::
