@@ -5,19 +5,19 @@ and has fairly limited functionality -- the intention is only to gather feedback
 from real-world agents on how ergonomic this programming model actually is in
 practice.
 
-If something seems wrong, dumb, or just overly tedious, it is probably
-intentionally stripped down to allow us to focus on the core issues. But please
-do ask and give feedback anyway! Barring significant negative feedback, the core
-programming model used inside agents is expected to be refined but not
-fundamentally change.
+If something seems wrong, dumb, or just overly tedious, it might be an error,
+but it could also be intentionally stripped down to allow us to focus on the
+core issues. But please give me feedback on everything anyway! Barring
+significant negative feedback, the core programming model used inside agents is
+expected to be refined but not fundamentally change, so now is your chance.
 
-Below follows a description on how the current prototype is used, as well as a
+Below follows a description of how the current prototype is used, as well as a
 discussion on how SSS are likely to evolve.
 
 ## The big picture
-*(Skip this if you already know what and why SSS are.)*
+*(Skip this if you already know what and why SSS is.)*
 
-SSS are intended to function as a *state replication system*. Agent A has a
+SSS is intended to function as a *state replication system*. Agent A has a
 piece of mutable state it wants to make available to its subscribers, and the
 subscribers should be able to keep in sync with minimal work.
 
