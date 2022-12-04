@@ -193,8 +193,10 @@ instead of just one each. For example:
   ==
 ```
 
-Of course, `+wash:in` would then have deal with these separately, another reason
-why this particular interface declaration format isn't ideal.
+Of course, `+rock:in` would have to be modified in an analogous way and
+`+wash:in` would have to deal with the different cases separately, both of
+which are further reasons for why this particular interface declaration format
+isn't ideal.
 
 But note that at the moment, there is **only one outgoing publication
 state type**, i.e. even though the agent can publish different states on many
