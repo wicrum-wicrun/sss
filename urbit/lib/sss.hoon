@@ -5,18 +5,17 @@
 ++  agent
   $_  ^|
   |_  [bowl:agent:gall (map path rock:pub) (map [ship dude path] rock:sub)]
-  ++  on-init                                 *(quip card _^|(..on-init))
-  ++  on-save                                 *vase
-  ++  on-load   |~  vase                      *(quip card _^|(..on-init))
-  ++  on-poke   |~  [mark vase]               *(quip card _^|(..on-init))
-  ++  on-watch  |~  path                      *(quip card _^|(..on-init))
-  ++  on-leave  |~  path                      *(quip card _^|(..on-init))
-  ++  on-peek   |~  path                      *(unit (unit cage))
-  ++  on-agent  |~  [wire sign:agent:gall]    *(quip card _^|(..on-init))
-  ++  on-rock   |~  [dude rock:sub]           *(quip card _^|(..on-init))
-  ++  on-wave   |~  [dude rock:sub wave:sub]  *(quip card _^|(..on-init))
-  ++  on-arvo   |~  [wire sign-arvo]          *(quip card _^|(..on-init))
-  ++  on-fail   |~  [term tang]               *(quip card _^|(..on-init))
+  ++  on-init                                        *(quip card _^|(..on-init))
+  ++  on-save                                        *vase
+  ++  on-load   |~  vase                             *(quip card _^|(..on-init))
+  ++  on-poke   |~  [mark vase]                      *(quip card _^|(..on-init))
+  ++  on-watch  |~  path                             *(quip card _^|(..on-init))
+  ++  on-leave  |~  path                             *(quip card _^|(..on-init))
+  ++  on-peek   |~  path                             *(unit (unit cage))
+  ++  on-agent  |~  [wire sign:agent:gall]           *(quip card _^|(..on-init))
+  ++  on-rock   |~  [dude rock:sub (unit wave:sub)]  *(quip card _^|(..on-init))
+  ++  on-arvo   |~  [wire sign-arvo]                 *(quip card _^|(..on-init))
+  ++  on-fail   |~  [term tang]                      *(quip card _^|(..on-init))
   --
 ::
 +$  card  (wind note gift)
@@ -276,8 +275,8 @@
             =.  exo
               %+  ~(put by exo)  [src.bowl from.res &5.res]
               flow(rok [aeon rock]:res, aeon (max aeon.res aeon.flow))
-            =^  cards  agent :: (on-rock:ag from.res rock.res)
-              (~(on-rock agent bowl inject-endo inject-exo) from.res rock.res)
+            =^  cards  agent
+              (~(on-rock agent bowl inject-endo inject-exo) from.res rock.res ~)
             (output cards)
           ::
               %wave
@@ -292,8 +291,7 @@
               %~  .  agent
               :+  bowl  inject-endo
               (~(put by inject-exo) [src.bowl from.res &5.res] rock)
-            =^  cards  agent  (on-wave:ag from.res rock u.wave)
-            =^  cards  agent  (on-rock:ag from.res rock)
+            =^  cards  agent  (on-rock:ag from.res rock wave)
             $(this (output cards), rok.flow [+(aeon.rok.flow) rock])
           ==
         ==

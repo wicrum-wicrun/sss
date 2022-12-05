@@ -56,22 +56,12 @@
 ::
 ++  on-agent  _`this
 ++  on-rock
-  |=  [=dude:gall =rock:in]
-  ?-    -.rock
+  |=  [dud=dude:gall rok=rock:in wav=(unit wave:in)]
+  ?-    -.rok
       [%foo %bar ~]
-    ~&  >  "received rock {<rock>} from {<dude>} on {<src.bowl>}"
+    ~&  >  "received rock {<rok>} from {<dud>} on {<src.bowl>}"
     `this
   ==
-::
-++  on-wave
-  |=  [=dude:gall =rock:in =wave:in]
-  ?-    -.rock
-      [%foo %bar ~]
-    ~&  >
-      "received rock {<rock>} and wave {<wave>} from {<dude>} on {<src.bowl>}"
-    `this
-  ==
-::
 ++  on-arvo   _`this
 ++  on-peek   _~
 ++  on-watch  _`this

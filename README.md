@@ -149,15 +149,14 @@ for outgoing publications as well.
 
 But except for the inclusion of paths, both `+in` and `+out` represent the same
 type of state: a reverse-order append-only text log. Using `+in`, the
-subscribing agent can accept incoming data in a new arm called `+on-wave`:
+subscribing agent can accept incoming data in a new arm called `+on-rock`:
 
 ```hoon
-++  on-wave
-  |=  [=dude:gall =rock:in =wave:in] :: dude:gall is the publishing agent.
-  ?-    -.rock
+++  on-rock
+  |=  [dud=dude:gall rok=rock:in wav=(unit wave:in)]
+  ?-    -.rok
       [%foo %bar ~]
-    ~&  >
-      "received rock {<rock>} and wave {<wave>} from {<dude>} on {<src.bowl>}"
+    ~&  >  "received rock {<rok>} from {<dud>} on {<src.bowl>}"
     `this
   ==
 ```
@@ -165,28 +164,15 @@ subscribing agent can accept incoming data in a new arm called `+on-wave`:
 Note that since `$rock:in` and `$wave:in` are defined using `$%` where the
 head tag is the path, once we've confirmed the path using `?-`, it isn't
 necessary to use `!<` to extract the incoming data from a `$vase` -- the typed
-value is directly available!
+value is available directly!
 
-The `$rock` in the above snippet was most likely generated automatically by the
-subscriber's SSS system by running `(wash prev-rock wave)`. But in some cases,
-the subscriber may not be able to get up to date by simply downloading `$wave`s,
-and instead has to request a *snapshot* `$rock` from the publisher, and then use
-all subsequent waves to catch up. When this happens, the first `$rock` will not
-be accompanied by any wave, so instead the `+on-rock` arm will be used:
-
-```hoon
-++  on-rock
-  |=  [=dude:gall =rock:in]
-  ?-    -.rock
-      [%foo %bar ~]
-    ~&  >  "received rock {<rock>} from {<dude>} on {<src.bowl>}"
-    `this
-  ==
-```
-
-In fact, `+on-rock` will be called *every* time the state updates. If `+on-wave`
-is also called during an update, the order will be `+on-wave` followed by
-`+on-rock`.
+In the sample, `rok` was most likely generated automatically by the subscriber's
+SSS system by running `(wash prev-rock wave)`. If this is the case, `wav` will
+be `[~ wave]`. But in some cases, the subscriber may not be able to get up to
+date by simply downloading `$wave`s, but instead has to request a *snapshot*
+`$rock` from the publisher, and then use all subsequent waves to catch up. When
+this happens, the first `$rock` in that sequence will not be accompanied by any
+wave, which means that `wav` will be `~`. 
 
 ### Multiple subscriptions
 We could also expand `+in` to handle other types of incoming subscriptions on
@@ -211,7 +197,7 @@ different paths, all of these states have to be of the same type. This is
 obviously not enough for many real-world use cases, but given that the current
 interface declaration format isn't expected to remain, support for multiple
 state types hasn't been a priority. Let me know if you really need this to test
-your app!
+your agent!
 
 
 ### State replication
@@ -245,7 +231,7 @@ chat application:
 This is quite restrictive. Since the path in the type is declared explicitly
 and statically, we can only ever subscribe to a single path, `/chats`. We can
 make it possible to subscribe to dynamic paths while maintaining a static
-interface declaration by changing the terminator from a `~` to a `*`:
+interface declaration by changing the terminator from `~` to `*`:
 
 ```hoon
 +$  wave
@@ -253,10 +239,10 @@ interface declaration by changing the terminator from a `~` to a `*`:
   ==
 ```
 
-This would enable the agent to subscribe to `/chats/chat-1`, `/chats/chat-2`,
-`/chats/chat-1/subchat-1` and so on. These would all be handled using the same
-interface, but would still appear as completely distinct states in `+on-rock`,
-`+on-wave` and in the `map` in the agent's sample.
+This would enable the agent to subscribe to `/chats`, `/chats/chat-1`,
+`/chats/chat-2`, `/chats/chat-1/subchat-1` and so on. These would all be handled
+using the same `$lake` interface, but would still appear as completely distinct
+states in `+on-rock`, `+on-wave` and in the `map` in the agent's sample.
 
 ## Evolution of SSS
 ...
