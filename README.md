@@ -98,9 +98,9 @@ is the `$wave`. Its *only* job is to `%give` new `$wave`s, like so:
 [%give %wave /foo/bar 'hello world!']
 ```
 
-The SSS system then takes care of distributing these to any *subscribing*
-agents, which are expected to have matching `$lake` interfaces on their end to
-interpret the incoming information.
+The SSS system then takes care of distributing these and any relevant `$rock`
+snapshots to all *subscribing* agents, which are expected to have matching
+`$lake` interfaces on their ends to interpret the incoming information.
 
 ### Incoming subscriptions
 To receive `$wave`s such as the one above, the subscribing agent has to `%pass`
