@@ -85,7 +85,7 @@ Let's take it arm by arm:
 
 - The `$rock` is the type of the **state** that the agent makes available on its
 publications. Note that the agent *never* publishes this manually, instead it is
-bunted by the SSS system.
+initially bunted, and later possibly snapshotted, by the SSS system.
 - The `$wave` is the type of the **diff** or **message** that the agent emits
 every time it wants to update the published `$rock`.
 - `+wash` is a **transition function**, i.e. a gate used by the SSS system to
