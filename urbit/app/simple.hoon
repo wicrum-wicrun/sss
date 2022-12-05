@@ -59,7 +59,9 @@
   |=  [dud=dude:gall rok=rock:in wav=(unit wave:in)]
   ?-    -.rok
       [%foo %bar ~]
-    ~&  >  "received rock {<rok>} from {<dud>} on {<src.bowl>}"
+    ~&  >  "ship {<src.bowl>}, agent {<dud>}, path {<`path`-.rok>}:"
+    ~?  >  ?=(^ wav)  "received wave {<+.u.wav>}"
+    ~&  >  "rock is now {<+.rok>}"
     `this
   ==
 ++  on-arvo   _`this
