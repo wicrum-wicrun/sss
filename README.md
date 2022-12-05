@@ -204,10 +204,10 @@ your agent!
 
 ### State replication
 So far, the subscriber has only had access to the replicated state in the
-`+on-wave` and `+on-rock` arms, and the publisher has never had access to it.
-State is supposed to be always available, so this is clearly insufficient. We
-solve this by putting two maps containing all the incoming and outgoing states
-in the agent's sample:
+`+on-rock` arm, and the publisher has never had access to it. State is supposed
+to be always available, so this is clearly insufficient. We solve this by
+putting two maps containing all the incoming and outgoing states in the agent's
+sample:
 
 ```hoon
 ^-  agent:sss
@@ -244,7 +244,7 @@ interface declaration by changing the terminator from `~` to `*`:
 This would enable the agent to subscribe to `/chats`, `/chats/chat-1`,
 `/chats/chat-2`, `/chats/chat-1/subchat-1` and so on. These would all be handled
 using the same `$lake` interface, but would still appear as completely distinct
-states in `+on-rock`, `+on-wave` and in the `map` in the agent's sample.
+states in `+on-rock` and in the `map` in the agent's sample.
 
 ## Evolution of SSS
 ...
