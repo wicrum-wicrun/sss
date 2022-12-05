@@ -193,8 +193,8 @@ Of course, `$rock:in` would have to be modified in an analogous way and
 these are further reasons for why this particular interface declaration format
 isn't ideal.
 
-But note that at the moment, there is **only one outgoing publication state
-type**, i.e. even though the agent can publish different states on many
+But note that at the moment, there can only be one *outgoing* publication state
+type, i.e. even though the agent can publish different states on many
 different paths, all of these states have to be of the same type. This is
 obviously not enough for many real-world use cases, but given that the current
 interface declaration format isn't expected to remain, support for multiple
