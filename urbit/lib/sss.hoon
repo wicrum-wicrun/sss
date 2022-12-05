@@ -213,7 +213,6 @@
     ::
     ++  sss-engine
       |_  cards=(list card:agent:gall)
-      +*  ag    ~(. agent bowl inject-endo inject-exo)
       ++  this  .
       ++  emit  |=(=card:agent:gall this(cards [card cards]))
       ++  emil
@@ -274,10 +273,11 @@
           ?>  (lth aeon.rok.flow aeon.res)
           ?-    what.res
               %rock
-            =^  cards  agent  (on-rock:ag from.res rock.res)
             =.  exo
               %+  ~(put by exo)  [src.bowl from.res &5.res]
               flow(rok [aeon rock]:res, aeon (max aeon.res aeon.flow))
+            =^  cards  agent :: (on-rock:ag from.res rock.res)
+              (~(on-rock agent bowl inject-endo inject-exo) from.res rock.res)
             (output cards)
           ::
               %wave
@@ -288,6 +288,10 @@
             =^  wave  wav.flow  (del:(wav sub) wav.flow +(aeon.rok.flow))
             ?~  wave  this(exo (~(put by exo) [src.bowl from.res &5.res] flow))
             =/  =rock:sub  (wash:sub rock.rok.flow u.wave)
+            =/  ag
+              %~  .  agent
+              :+  bowl  inject-endo
+              (~(put by inject-exo) [src.bowl from.res &5.res] rock)
             =^  cards  agent  (on-wave:ag from.res rock u.wave)
             =^  cards  agent  (on-rock:ag from.res rock)
             $(this (output cards), rok.flow [+(aeon.rok.flow) rock])
