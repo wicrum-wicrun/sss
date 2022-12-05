@@ -19,7 +19,7 @@ discussion on how SSS is likely to evolve.
 
 SSS is intended to function as a *state replication system*. Agent A has a
 piece of mutable state it wants to make available to its subscribers, and the
-subscribers should be able to keep in sync minimal work.
+subscribers should be able to keep in sync with minimal work.
 
 There exist two obvious solutions to this problem. First, Agent A could achieve
 this by sending out the entire state every time it changes, but this is
