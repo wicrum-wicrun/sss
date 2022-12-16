@@ -244,7 +244,7 @@ interface declaration by changing the terminator from `~` to `*`:
 This would enable the agent to subscribe to `/chats`, `/chats/chat-1`,
 `/chats/chat-2`, `/chats/chat-1/subchat-1` and so on. These would all be handled
 using the same `$lake` interface, but would still appear as completely distinct
-states in `+on-rock` and the `map` of subscriptions in the agent's sample.
+states in `+on-rock` and the `map` in the agent's sample.
 
 ## Evolution of SSS
 ...
