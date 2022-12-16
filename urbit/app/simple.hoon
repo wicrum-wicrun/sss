@@ -34,7 +34,7 @@
 %-  mk-agent:sss
 ^-  agent:sss
 ::
-|_  [=bowl:gall pub=(map path rock:out) sub=(map [ship dude:gall path] rock:in)]
+|_  [=bowl:gall pub=(map path rock:out) sub=(map [ship dude:gall path] [? rock:in])]
 +*  this  .
 ::
 ++  on-init  `this
@@ -44,6 +44,8 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:sss _this)
+  ~&  >>  %on-poke
+  ~&  >  "sub-map is: {<sub>}"
   ?+    mark  !!
       %add
     :_  this
@@ -62,11 +64,16 @@
     ~&  >  "ship {<src.bowl>}, agent {<dud>}, path {<`path`-.rok>}:"
     ~?  >  ?=(^ wav)  "received wave {<+.u.wav>}"
     ~&  >  "rock is now {<+.rok>}"
+    ~&  >  "sub-map is: {<sub>}"
+    ?:  ?=([~ * %crash] wav)  ~&  >>>  'crash!'  !!
     `this
   ==
 ++  on-arvo   _`this
 ++  on-peek   _~
 ++  on-watch  _`this
 ++  on-leave  _`this
-++  on-fail   _`this
+++  on-fail
+  ~&  >>  %on-fail
+  ~&  >  "sub-map is: {<sub>}"
+  _`this
 --

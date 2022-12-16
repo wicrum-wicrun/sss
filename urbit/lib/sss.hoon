@@ -4,7 +4,7 @@
 |%
 ++  agent
   $_  ^|
-  |_  [bowl:agent:gall (map path rock:pub) (map [ship dude path] rock:sub)]
+  |_  [bowl:agent:gall (map path rock:pub) (map [ship dude path] [? rock:sub])]
   ++  on-init                                        *(quip card _^|(..on-init))
   ++  on-save                                        *vase
   ++  on-load   |~  vase                             *(quip card _^|(..on-init))
@@ -47,7 +47,7 @@
   ==
 ++  flow
   $:  =aeon
-      rok=[=aeon =rock:sub]
+      rok=[=aeon fail=_| =rock:sub]
       wav=((mop aeon wave:sub) lte)
   ==
 ++  rok  ((on aeon rock:pub) gte)
@@ -164,10 +164,10 @@
     val:(fall (pry:rok rok.tide) *[key =val]:rok)
   ::
   ++  inject-exo
-    ^-  (map [ship dude path] rock:sub)
+    ^-  (map [ship dude path] [? rock:sub])
     %-  ~(run by exo)
     |=  =flow
-    rock.rok.flow
+    [fail rock]:rok.flow
   ::
   ++  hc
     |_  =bowl:gall
@@ -214,13 +214,7 @@
       |_  cards=(list card:agent:gall)
       ++  this  .
       ++  emit  |=(=card:agent:gall this(cards [card cards]))
-      ++  emil
-        |=  cs=(list card:agent:gall)
-        ^+  this
-        %+  roll  cs
-        |=  [=card:agent:gall =_this]
-        (emit:this card)
-      ::
+      ++  emil  |=(cs=(list card:agent:gall) this(cards (weld (flop cs) cards)))
       ++  abet  [(flop cards) state]
       ++  run
         |=  res=(quip card ^agent)
@@ -267,33 +261,53 @@
           ==
         ::
             %scry
-          =/  =flow  (~(gut by exo) [src.bowl from.res &5.res] *flow)
-          ~&  >  [%new-scry flow=flow response=res]
-          ?>  (lth aeon.rok.flow aeon.res)
+          =/  =path  &5.res
+          =/  =flow  (~(gut by exo) [src.bowl from.res path] *flow)
+          ?.  (lth aeon.rok.flow aeon.res)
+            %.  this
+            (slog leaf/"ignoring stale {<what.res>} at aeon {<aeon.res>}" ~)
+          |^
           ?-    what.res
               %rock
-            =.  exo
-              %+  ~(put by exo)  [src.bowl from.res &5.res]
-              flow(rok [aeon rock]:res, aeon (max aeon.res aeon.flow))
-            =^  cards  agent
-              (~(on-rock agent bowl inject-endo inject-exo) from.res rock.res ~)
-            (output cards)
+            =.  wav.flow  (lot:(wav sub) wav.flow `aeon.res ~)
+            =.  rok.flow  [aeon | rock]:res
+            =.  aeon.flow  (max aeon.res aeon.flow)
+            (swim ~)
           ::
               %wave
-            =.  wav.flow  (put:(wav sub) wav.flow aeon.res wave.res)
             ?.  =(aeon.res +(aeon.rok.flow))
-              this(exo (~(put by exo) [src.bowl from.res &5.res] flow))
-            |-
-            =^  wave  wav.flow  (del:(wav sub) wav.flow +(aeon.rok.flow))
-            ?~  wave  this(exo (~(put by exo) [src.bowl from.res &5.res] flow))
-            =/  =rock:sub  (wash:sub rock.rok.flow u.wave)
-            =/  ag
-              %~  .  agent
-              :+  bowl  inject-endo
-              (~(put by inject-exo) [src.bowl from.res &5.res] rock)
-            =^  cards  agent  (on-rock:ag from.res rock wave)
-            $(this (output cards), rok.flow [+(aeon.rok.flow) rock])
+              =.  wav.flow  (put:(wav sub) wav.flow aeon.res wave.res)
+              this(exo (~(put by exo) [src.bowl from.res path] flow))
+            =.  rok.flow  [aeon.res | (wash:sub rock.rok.flow wave.res)]
+            (swim `wave.res)
           ==
+          ::
+          ++  swim
+            |=  wave=(unit wave:sub)
+            ^+  this
+            =*  ag
+              %~  .  agent
+              :+  bowl  ~+(inject-endo)
+              %+  ~(put by ~+(inject-exo))  [src.bowl from.res path]
+              [fail rock]:rok.flow
+            ?-    res=(mule |.((on-rock:ag from.res rock.rok.flow wave)))
+                [%& *]  (dive p.res)
+                [%| *]
+              =.  fail.rok.flow  &
+              ?~  res=(mole |.((on-fail:ag %on-rock p.res)))
+                (dive `agent)
+              (dive u.res)
+            ==
+          ++  dive
+            |=  =(quip card _agent)
+            ^+  this
+            =.  agent  +.quip
+            =.  this  (output -.quip)
+            =^  wave  wav.flow  (del:(wav sub) wav.flow +(aeon.rok.flow))
+            ?~  wave  this(exo (~(put by exo) [src.bowl from.res path] flow))
+            =.  rok.flow  [+(aeon.rok.flow) | (wash:sub rock.rok.flow u.wave)]
+            (swim wave)
+          --
         ==
       ::
       ++  output
@@ -303,10 +317,7 @@
         ?+    card  (emit `card:agent:gall`card)
             [%slip %agent * %surf *]  ~|(%slip-surf !!)
             [%pass * %agent * %surf *]
-          %-  emil:this
-          :~  (pine %wave [ship name path.task]:q.card)
-              (pine %rock [ship name path.task]:q.card)
-          ==
+          (emit:this (pine %wave [ship name path.task]:q.card))
         ::
             [%give %wave *]
           %=  this  endo
