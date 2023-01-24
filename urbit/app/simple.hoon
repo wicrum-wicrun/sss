@@ -24,20 +24,20 @@
 ::
 =/  in-log  (mk-subs log ,[%foo %bar ~])
 =/  in-sum  (mk-subs sum ,[%baz ~])
-=/  out-log  (mk-pubs log)
+=/  out-log  (mk-pubs log ,[%foo %bar ~])
 ::
 |_  =bowl:gall
 +*  this  .
     da-in-log  ~(. (da log ,[%foo %bar ~]) in-log bowl)
     da-in-sum  ~(. (da sum ,[%baz ~]) in-sum bowl)
-    du-out-log  ~(. (du log) out-log bowl)
+    du-out-log  ~(. (du log ,[%foo %bar ~]) out-log bowl)
 ::
 ++  on-init  `this
 ++  on-save  !>([in-log in-sum out-log])
-++  on-load
-  |=  =vase
-  =/  old  !<([=_in-log =_in-sum =_out-log] vase)
-  `this(in-log in-log.old, in-sum in-sum.old, out-log out-log.old)
+++  on-load  _`this
+::  |=  =vase
+::  =/  old  !<([=_in-log =_in-sum =_out-log] vase)
+::  `this(in-log in-log.old, in-sum in-sum.old, out-log out-log.old)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -47,7 +47,7 @@
   ?+    mark  !!
       %noun  `this
       %add
-    `this(out-log (~(give (du log) out-log bowl) /foo/bar !<(cord vase)))
+    `this(out-log (give:du-out-log [%foo %bar ~] !<(cord vase)))
   ::
       %surf
     :_  this
@@ -55,14 +55,14 @@
   ::
       %sss-request
     :_  this
-    =/  req  !<(request:poke vase)
-    ?+    ?-(-.req %scry path.req, %pine path.req)  !!
+    =/  req  ;;(of:du-out-log !<(* vase))
+    ?-    path.req
         [%foo %bar ~]
-      ~[(~(request (du log) out-log bowl) req)]
+      ~[(request:du-out-log req)]
     ==
   ::
       %sss-response
-    ?-    res=!<($%(to:da-in-log to:da-in-sum) vase)
+    ?-    res=;;($%(to:da-in-log to:da-in-sum) !<(* vase))
         [[%foo %bar ~] *]
       =^  cards  in-log  (response:da-in-log res)
       [cards this]
@@ -73,14 +73,15 @@
     ==
   ::
       %sss-on-rock
-    ?-    res=!<($%(from:da-in-log from:da-in-sum) vase)
+    ?-    res=;;($%(from:da-in-log from:da-in-sum) !<(* vase))
         [[%foo %bar ~] *]
-      ~&  "last message from {<from.res>} on {<src.bowl>} is {<(rear rock.res)>}"
+      ~&  "last message from {<from.res>} on {<src.res>} is {<,.-.rock.res>}"
+      ?<  =(-.rock.res 'crash')
       `this
     ::
         [[%baz ~] *]
       ?.  =(rock.res 42)  `this
-      ~&  "sum from {<from.res>} on {<src.bowl>} is 42"
+      ~&  "sum from {<from.res>} on {<src.res>} is 42"  ::NOTE src.res not src.bowl!
       `this
     ==
   ==
@@ -88,31 +89,27 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card:agent:gall _this)
-  ?+    wire  `this
+  ?-    wire ::  `this
       [~ %sss %on-rock @ @ @ %foo %bar ~]
-    `this(in-log (chit:da-in-log wire sign))
+    `this(in-log (chit:da-in-log |3:wire sign))
   ::
       [~ %sss %on-rock @ @ @ %baz ~]
-    `this(in-sum (chit:da-in-sum wire sign))
+    `this(in-sum (chit:da-in-sum |3:wire sign))
   ::
-      [~ %sss %response *]
+      *
     ?>  ?=(%poke-ack -.sign)
     ?~  p.sign  `this
     ((slog u.p.sign) `this)
   ==
+++  on-arvo
+  |=  [=wire sign=sign-arvo]
+  ^-  (quip card:agent:gall _this)
+  :_  this
+  ?+  wire  ~
+    [~ %sss %behn @ @ %foo %bar ~]  (behn:da-in-log |3:wire)
+    [~ %sss %behn @ @ %baz ~]       (behn:da-in-sum |3:wire)
+  ==
 ::
-::  ++  on-rock
-::    |=  [dud=dude:gall rok=rock:in wav=(unit wave:in)]
-::    ?-    -.rok
-::        [%foo %bar ~]
-::      ~&  >  "ship {<src.bowl>}, agent {<dud>}, path {<`path`-.rok>}:"
-::      ~?  >  ?=(^ wav)  "received wave {<+.u.wav>}"
-::      ~&  >  "rock is now {<+.rok>}"
-::      ~&  >  "sub-map is: {<sub>}"
-::      ?:  ?=([~ * %crash] wav)  ~&  >>>  'crash!'  !!
-::      `this
-::    ==
-++  on-arvo   _`this
 ++  on-peek   _~
 ++  on-watch  _`this
 ++  on-leave  _`this

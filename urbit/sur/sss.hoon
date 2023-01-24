@@ -13,9 +13,12 @@
 ++  poke
   |%
   ++  request
-    $%  [%pine from=dude =what =path]
-        [%scry from=dude =what =path aeon=@ud]
-    ==
+    |*  paths=mold
+    $:  path=paths
+        from=dude
+        $%  [type=%pine =what]
+            [type=%scry =what aeon=@ud]
+    ==  ==
   ++  response
     |*  [=(lake) paths=mold]
     $:  path=paths
