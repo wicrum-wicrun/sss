@@ -22,65 +22,85 @@
 %-  agent:dbug
 %+  verb  &
 ::
-=/  in-log  (mk-subs log [/foo/bar]~)
-=/  in-sum  (mk-subs sum [/baz sum]~)
-=/  out-log  (mk-pubs log [/foo/bar]~)
+=/  in-log  (mk-subs log ,[%foo %bar ~])
+=/  in-sum  (mk-subs sum ,[%baz ~])
+=/  out-log  (mk-pubs log)
 ::
-|_  [=bowl:gall pub=(map path rock:out) sub=(map [ship dude:gall path] [? rock:in])]
+|_  =bowl:gall
 +*  this  .
+    da-in-log  ~(. (da log ,[%foo %bar ~]) in-log bowl)
+    da-in-sum  ~(. (da sum ,[%baz ~]) in-sum bowl)
+    du-out-log  ~(. (du log) out-log bowl)
 ::
 ++  on-init  `this
-++  on-save  *vase
-++  on-load  _`this
+++  on-save  !>([in-log in-sum out-log])
+++  on-load
+  |=  =vase
+  =/  old  !<([=_in-log =_in-sum =_out-log] vase)
+  `this(in-log in-log.old, in-sum in-sum.old, out-log out-log.old)
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card:sss _this)
-  ~&  >>  %on-poke
-  ~&  >  "sub-map is: {<~(take da in-log)>}"
-  ?+    mark
+  ^-  (quip card:agent:gall _this)
+  ~&  >  "sub-map is: {<read:da-in-log>}"
+  ~&  >  "pub-map is: {<read:du-out-log>}"
+  ?+    mark  !!
+      %noun  `this
       %add
-    =^  cards  out-log  (~(give da out-log) /foo/bar !<(cord vase))
-    [cards this]
+    `this(out-log (~(give (du log) out-log bowl) /foo/bar !<(cord vase)))
   ::
       %surf
-    =^  cards  in-log  (~(surf da in-log) !<(@p vase) %simple /foo/bar)
-    [cards this]
+    :_  this
+    ~[(surf:da-in-log !<(@p vase) %simple [%foo %bar ~])]
   ::
       %sss-request
     :_  this
     =/  req  !<(request:poke vase)
-    ?-  path.req
-      [%foo %bar ~]  ~[(~(request du out-log) req)]
+    ?+    ?-(-.req %scry path.req, %pine path.req)  !!
+        [%foo %bar ~]
+      ~[(~(request (du log) out-log bowl) req)]
     ==
   ::
       %sss-response
-    =/  res  !<((response:poke (lake)) vase)
-    ?-    -.res
-        %pine
-      :_  this
-      ?-  path.res
-        [%foo %bar ~]  (~(pine-response du in-log) res)
-      ==
+    ?-    res=!<($%(to:da-in-log to:da-in-sum) vase)
+        [[%foo %bar ~] *]
+      =^  cards  in-log  (response:da-in-log res)
+      [cards this]
     ::
-        %scry
-      ?-  &5.res
-        [%foo %bar ~]  =^  cards  in-log  (~(scry-response du in-log) res)
-                       [cards this]
-      ==
+        [[%baz ~] *]
+      =^  cards  in-sum  (response:da-in-sum res)
+      [cards this]
     ==
   ::
       %sss-on-rock
-    ?-    res=!<(?(~(mold da in-log) ~(mold da in-sum)))
-        [* [%foo %bar ~] *]
-      !!
+    ?-    res=!<($%(from:da-in-log from:da-in-sum) vase)
+        [[%foo %bar ~] *]
+      ~&  "last message from {<from.res>} on {<src.bowl>} is {<(rear rock.res)>}"
+      `this
     ::
-        [* [%baz ~] *]
-      !!
+        [[%baz ~] *]
+      ?.  =(rock.res 42)  `this
+      ~&  "sum from {<from.res>} on {<src.bowl>} is 42"
+      `this
     ==
   ==
 ::
-++  on-agent  _`this
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card:agent:gall _this)
+  ?+    wire  `this
+      [~ %sss %on-rock @ @ @ %foo %bar ~]
+    `this(in-log (chit:da-in-log wire sign))
+  ::
+      [~ %sss %on-rock @ @ @ %baz ~]
+    `this(in-sum (chit:da-in-sum wire sign))
+  ::
+      [~ %sss %response *]
+    ?>  ?=(%poke-ack -.sign)
+    ?~  p.sign  `this
+    ((slog u.p.sign) `this)
+  ==
+::
 ::  ++  on-rock
 ::    |=  [dud=dude:gall rok=rock:in wav=(unit wave:in)]
 ::    ?-    -.rok
@@ -96,8 +116,5 @@
 ++  on-peek   _~
 ++  on-watch  _`this
 ++  on-leave  _`this
-++  on-fail
-  ~&  >>  %on-fail
-  ~&  >  "sub-map is: {<~(read da in-log)>}"
-  _`this
+++  on-fail   _`this
 --

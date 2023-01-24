@@ -7,20 +7,24 @@
   +$  wave  ^wave
   ++  wash  |~  [rock wave]  *rock
   --
+::  +$  aeon  @ud
 +$  dude  dude:agent:gall
 +$  what  ?(%rock %wave)
 ++  poke
   |%
-  +$  request
+  ++  request
     $%  [%pine from=dude =what =path]
         [%scry from=dude =what =path aeon=@ud]
     ==
   ++  response
-    |*  =(lake)
-    $%  [%pine from=dude aeon=@ud =what =path]
-        $:  %scry  from=dude  aeon=@ud
-            $%  [what=%rock =rock:lake]
-                [what=%wave =wave:lake]
-    ==  ==  ==
+    |*  [=(lake) paths=mold]
+    $:  path=paths
+        from=dude
+        aeon=@ud
+        $=  payload
+        $@  =what
+        $%  [what=%rock =rock:lake]
+            [what=%wave =wave:lake]
+    ==  ==
   --
 --
