@@ -280,9 +280,9 @@
               ==
             =?  sss  (gth aeon.res +(aeon.flow))
               (emit (^pine %rock current))
-            =?  sss  (gth aeon.res aeon.flow)
+            =?  sss  (gth aeon.res aeon.rok.flow)
               %-  emil
-              %+  turn  (gulf +(aeon.flow) aeon.res)
+              %+  turn  (gulf +(aeon.rok.flow) aeon.res)
               |=  =aeon
               :*  %pass   /
                   %agent  [src.bowl from.res]
