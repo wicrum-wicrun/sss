@@ -28,9 +28,12 @@
 ::
 |_  =bowl:gall
 +*  this  .
-    da-in-log  ~(. (da log ,[%foo %bar ~]) in-log bowl)
-    da-in-sum  ~(. (da sum ,[%baz ~]) in-sum bowl)
-    du-out-log  ~(. (du log ,[%foo %bar ~]) out-log bowl)
+    da-in-log   =/  da  (da log ,[%foo %bar ~])
+                ~(. da in-log bowl -:!>(*result:da) -:!>(from:da))
+    da-in-sum   =/  da  (da sum ,[%baz ~])
+                ~(. da in-sum bowl -:!>(*result:da) -:!>(from:da))
+    du-out-log  =/  du  (du log ,[%foo %bar ~])
+                ~(. du out-log bowl -:!>(*result:du))
 ::
 ++  on-init  `this
 ++  on-save  !>([in-log in-sum out-log])
@@ -53,36 +56,34 @@
     :_  this
     ~[(surf:da-in-log !<(@p vase) %simple [%foo %bar ~])]
   ::
-      %sss-request
-    :_  this
-    =/  req  ;;(of:du-out-log !<(* vase))
-    ?-    path.req
-        [%foo %bar ~]
-      ~[(request:du-out-log req)]
-    ==
-  ::
-      %sss-response
-    ?-    res=;;($%(to:da-in-log to:da-in-sum) !<(* vase))
-        [[%foo %bar ~] *]
-      =^  cards  in-log  (response:da-in-log res)
-      [cards this]
-    ::
-        [[%baz ~] *]
-      =^  cards  in-sum  (response:da-in-sum res)
-      [cards this]
-    ==
-  ::
       %sss-on-rock
-    ?-    res=;;($%(from:da-in-log from:da-in-sum) !<(* vase))
+    ?-    msg=!<($%(from:da-in-log from:da-in-sum) vase)
         [[%foo %bar ~] *]
-      ~&  "last message from {<from.res>} on {<src.res>} is {<,.-.rock.res>}"
-      ?<  =(-.rock.res 'crash')
+      ~&  "last message from {<from.msg>} on {<src.msg>} is {<,.-.rock.msg>}"
+      ?<  =(-.rock.msg 'crash')
       `this
     ::
         [[%baz ~] *]
-      ?.  =(rock.res 42)  `this
-      ~&  "sum from {<from.res>} on {<src.res>} is 42"  ::NOTE src.res not src.bowl!
+      ?.  =(rock.msg 42)  `this
+      ~&  "sum from {<from.msg>} on {<src.msg>} is 42"  ::NOTE src.msg not src.bowl!
       `this
+    ==
+  ::
+      %sss-to-pub
+    :_  this
+    ?-  msg=!<(into:du-out-log vase)
+      [[%foo %bar ~] *]  ~[(apply:du-out-log msg)]
+    ==
+  ::
+      %sss-to-sub
+    ?-    msg=!<($%(into:da-in-log into:da-in-sum) vase)
+        [[%foo %bar ~] *]
+      =^  cards  in-log  (apply:da-in-log msg)
+      [cards this]
+    ::
+        [[%baz ~] *]
+      =^  cards  in-sum  (apply:da-in-sum msg)
+      [cards this]
     ==
   ==
 ::

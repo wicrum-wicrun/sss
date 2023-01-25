@@ -29,5 +29,8 @@
         $%  [what=%rock =rock:lake]
             [what=%wave =wave:lake]
     ==  ==
+  ++  on-rock
+    |*  [=(lake) paths=mold]
+    ,[path=paths src=ship from=dude =rock:lake wave=(unit wave:lake)]
   --
 --
