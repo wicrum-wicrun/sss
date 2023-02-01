@@ -3,11 +3,12 @@
   |$  [rock wave]
   $_  ^?
   |%
+  ++  name  *term
   +$  rock  ^rock
   +$  wave  ^wave
   ++  wash  |~  [rock wave]  *rock
   --
-::  +$  aeon  @ud
++$  aeon  @ud
 +$  dude  dude:agent:gall
 +$  what  ?(%rock %wave)
 ++  poke

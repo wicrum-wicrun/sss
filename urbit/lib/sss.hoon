@@ -1,34 +1,50 @@
 /-  *sss
 ::
 |%
-++  mk-subs
-  |*  [=(lake) paths=mold]
-  *(map [ship dude paths] (flow lake))
-::
-++  mk-pubs
-  |*  [=(lake) paths=mold]
-  *(map paths (tide lake))
-::
-+$  rule  [rocks=_1 waves=_5]
-+$  aeon  @ud
-++  tide
+++  mk-subs  |*  [=(lake) paths=mold]  -:+6:(da lake paths)
+++  mk-pubs  |*  [=(lake) paths=mold]  -:+6:(du lake paths)
+++  mk-mar
   |*  =(lake)
-  $:  rok=((mop aeon rock:lake) gte)
-      wav=((mop aeon wave:lake) lte)
-      rul=rule
-  ==
-++  flow
-  |*  =(lake)
-  $:  =aeon
-      rok=[=aeon fail=_| =rock:lake]
-      wav=((mop aeon wave:lake) lte)
-  ==
+  |_  =(response:poke lake *)
+  ++  grow
+    |%
+    ++  noun  response
+    --
+  ++  grab
+    |%
+    ++  noun  (response:poke lake *)
+    --
+  ++  grad  %noun
+  --
+++  lake-mark
+  |=  =mark
+  ^+  mark
+  ?>  =('sss-' (end [3 3] mark)) 
+  (cut 3 [4 (met 3 mark)] mark)
 ::
-++  zoom  |=  =path  `^path`$/sss/path
+++  fled                                     ::  Like +sped but head is a path.
+  |=  vax=vase
+  ^-  vase
+  :_  q.vax
+  %-  ~(play ut p.vax)
+  =-  [%wtgr [%wtts - [%& 2]~] [%$ 1]]
+  =/  pax  ~|  %need-path  ;;(path -.q.vax)
+  |-  ^-  spec
+  ?~  pax  [%base %null]
+  [%bccl ~[[%leaf %ta -.pax] $(pax +.pax)]]
 ::
+++  zoom  |=  =noun  ~|  %path-none  $/sss/;;(path noun)
 ++  da
   |*  [=(lake) paths=mold]
-  |_  [sub=_(mk-subs lake paths) =bowl:gall result-type=type on-rock-type=type]
+  =>
+    |%
+    +$  flow
+      $:  =aeon
+          rok=[=aeon fail=_| =rock:lake]
+          wav=((mop aeon wave:lake) lte)
+      ==
+    --
+  |_  [sub=(map [ship dude paths] flow) =bowl:gall result-type=type on-rock-type=type]
   +*  wav     ((on aeon wave:lake) lte)
   +$  from    (on-rock:poke lake paths)
   +$  into    (response:poke lake paths)
@@ -46,44 +62,39 @@
     (pine %wave ship dude path)
   ::
   ++  read
-    ^-  (map [ship dude paths] [? rock:lake])
+    ;;  (map [ship dude path] [fail=? rock:lake])
     %-  ~(run by sub)
-    |=  =(flow lake)
+    |=  =flow
     [fail rock]:rok.flow
   ::
   ++  chit
-    |=  [[aeon=@ ship=@ dude=@ path=paths] =sign:agent:gall]
+    |=  [[aeon=term ship=term dude=term path=paths] =sign:agent:gall]
     ^+  sub
     ?>  ?=(%poke-ack -.sign)
     ?~  p.sign  sub
     %+  ~(jab by sub)  [(slav %p ship) dude path]
-    |=  =(flow lake)
+    |=  =flow
     ?.  =(aeon.rok.flow (slav %ud aeon))  flow
     flow(fail.rok &)
   ::
   ++  behn
     |=  [ship=term =dude path=paths]
     ^-  (list card:agent:gall)
-    ~[(pine %wave (slav %p ship) dude path)]
+    =>  .(ship (slav %p ship))
+    ?.  (~(has by sub) ship dude path)  ~
+    ~[(pine %wave ship dude path)]
   ::
   ++  apply
     |=  res=(response:poke lake paths)
-    ~&  >  received-response/res
-    =-  ~&  >>  [new-sub/-> cards/-<]  -
     ?@  payload.res
       (pine-response res)
     (scry-response res)
-  ::
-  ++  timer
-    |=  [ship=@ dude=@ path=paths]
-    ^-  card:agent:gall
-    [%pass (zoom behn/ship^dude^path) %arvo %b %wait (add ~s10 now.bowl)]
   ::
   ++  pine-response
     |=  res=[path=paths from=dude =aeon =what]
     ^-  (quip card:agent:gall _sub)
     =*  current  [src.bowl from.res path.res]
-    =/  =(flow lake)  (~(gut by sub) current *(flow lake))
+    =/  =flow  (~(gut by sub) current *flow)
     :_  (~(put by sub) current flow(aeon (max aeon.flow aeon.res)))
     ?-    what.res
         %rock
@@ -96,7 +107,9 @@
     ::
         %wave
       =/  cards=(list card:agent:gall)
-        ~[(timer (scot %p src.bowl) from.res path.res)]
+        :~  :*  %pass  (zoom behn/(scot %p src.bowl)^from.res^path.res)
+                %arvo  %b  %wait  (add ~s10 now.bowl)
+        ==  ==
       =?  cards  (gth aeon.res +(aeon.flow))  [(pine %rock current) cards]
       =?  cards  (gth aeon.res aeon.rok.flow)
         %+  weld  cards
@@ -119,7 +132,7 @@
         ==
     ^-  (quip card:agent:gall _sub)
     =*  current  [src.bowl dude path]
-    =/  =(flow lake)  (~(gut by sub) current *(flow lake))
+    =/  =flow  (~(gut by sub) current *flow)
     ?.  (lth aeon.rok.flow aeon)
       %.  `sub
       (slog leaf/"ignoring stale {<what>} at aeon {<aeon>}" ~)
@@ -154,7 +167,16 @@
   --
 ++  du
   |*  [=(lake) paths=mold]
-  |_  [pub=_(mk-pubs lake paths) =bowl:gall result-type=type]
+  =>
+    |%
+    +$  rule    [rocks=_1 waves=_5]
+    +$  tide
+      $:  rok=((mop aeon rock:lake) gte)
+          wav=((mop aeon wave:lake) lte)
+          rul=rule
+      ==
+    --
+  |_  [pub=(map paths tide) =bowl:gall result-type=type]
   +*  rok  ((on aeon rock:lake) gte)
       wav  ((on aeon wave:lake) lte)
   ::
@@ -163,8 +185,9 @@
   ++  give
     |=  [path=paths =wave:lake]
     ^+  pub
+    ?~  ;;((soft ^path) path)  ~|  %need-path  !!
     %+  ~(put by pub)  path
-    =/  =(tide lake)  (~(gut by pub) path *(tide lake))
+    =/  =tide  (~(gut by pub) path *tide)
     =/  next=aeon
       .+  %+  max  
         (fall (bind (pry:rok rok.tide) head) 0)
@@ -179,12 +202,13 @@
       %+  roll  (tab:wav wav.tide `aeon.last waves.rul.tide)
       |=  [[aeon =wave:lake] =_rock.last]
       (wash:lake rock wave)
-    tide(wav (lot:wav wav.tide (bind (ram:rok rok.tide) head) ~))
+    ~|  %rock-none
+    tide(wav (lot:wav wav.tide (bind (ram:rok rok.tide) |=([r=@ *] (dec r))) ~))
   ::
   ++  read
-    ^-  (map paths rock:lake)
+    ;;  (map path rock:lake)
     %-  ~(run by pub)
-    |=  =(tide lake)
+    |=  =tide
     =<  rock
     =/  snap=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
     %+  roll  (tap:wav (lot:wav wav.tide `aeon.snap ~))
@@ -196,7 +220,7 @@
     |=  path=paths
     ^+  pub
     %+  ~(put by pub)  path
-    =/  =(tide lake)  (~(gut by pub) path *(tide lake))
+    =/  =tide  (~(gut by pub) path *tide)
     =^  last  rok.tide  (pop:rok rok.tide)
     =^  next  wav.tide
       %^    (dip:wav ,[aeon rock:lake])
@@ -210,31 +234,29 @@
   ++  apply
     |=  req=(request:poke paths)
     ^-  card:agent:gall
-    ~&  >  received-request/req
-    =-  ~&  >>  cards/-  -  
-    =/  =(tide lake)  (~(gut by pub) path.req *(tide lake))
+    =*  mark  (cat 3 %sss- name:lake)
+    =/  =tide  (~(gut by pub) path.req *tide)
     ?-    type.req
         %scry
       :*  %pass   (zoom response/scry/(scot %p src.bowl)^from.req^(scot %ud aeon.req)^path.req)
           %agent  [src.bowl from.req]
-          %poke   %sss-to-sub  :-  result-type  ^-  result
+          %poke   mark  result-type  ^-  result
           :*  path.req  dap.bowl  aeon.req
-              ?-    what.req
-                  %wave  wave/(got:wav wav.tide aeon.req)
-                  %rock
-                ?:  =(aeon.req 0)  rock/*rock:lake
-                rock/(got:rok rok.tide aeon.req)
+              ?-  what.req
+                %wave  wave/(got:wav wav.tide aeon.req)
+                %rock  ?:  =(aeon.req 0)  rock/*rock:lake
+                       rock/(got:rok rok.tide aeon.req)
       ==  ==  ==
     ::
         %pine
       =/  =aeon
         ?-  what.req
-          %rock  key:(fall (pry:rok rok.tide) *[=key =val]:rok)
-          %wave  key:(fall (ram:wav wav.tide) *[=key =val]:wav)
+          %rock  key:(fall (pry:rok rok.tide) *[=key val]:rok)
+          %wave  key:(fall (ram:wav wav.tide) *[=key val]:wav)
         ==
       :*  %pass   (zoom response/pine/(scot %p src.bowl)^from.req^path.req)
           %agent  [src.bowl from.req]
-          %poke   %sss-to-sub  :-  result-type  ^-  result
+          %poke   mark  result-type  ^-  result
           [path.req dap.bowl aeon what.req]
       ==
     ==
