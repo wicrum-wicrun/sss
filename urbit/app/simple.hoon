@@ -43,7 +43,7 @@
     =.  out-sum  (give:du-out-sum !<([[%sum %foo ~] @ud] vase))
     ~&  >  "out-sum is: {<read:du-out-sum>}"
     `this
-::
+  ::
       %log
     =.  out-log  (give:du-out-log !<([?([%log *] [%other-log ~]) cord] vase))
     ~&  >  "out-log is: {<read:du-out-log>}"
@@ -56,6 +56,21 @@
       %surf-sum
     :_  this
     ~[(surf:da-in-sum !<(@p (slot 2 vase)) %simple !<([%sum *] (slot 3 vase)))]
+  ::
+      %rule-log
+    =.  out-log  (rule:du-out-log !<($%([[%log *] @ud @ud] [[%other-log ~] @ud @ud]) vase))
+    ~&  >  "out-log is: {<read:du-out-log>}"
+    `this
+  ::
+      %rule-sum
+    =.  out-sum  (rule:du-out-sum !<([[%sum %foo ~] @ud @ud] vase))
+    ~&  >  "out-sum is: {<read:du-out-sum>}"
+    `this
+  ::
+      %wipe-log
+    =.  out-log  (wipe:du-out-log !<(?([%log *] [%other-log ~]) vase))
+    ~&  >  "out-log is: {<read:du-out-log>}"
+    `this
   ::
       %sss-on-rock
     ?-    msg=!<($%(from:da-in-log from:da-in-sum) (fled vase))
