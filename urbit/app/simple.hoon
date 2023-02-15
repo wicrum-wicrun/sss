@@ -4,79 +4,80 @@
 %-  agent:dbug
 %+  verb  &
 ::
-=/  in-log  (mk-subs log ,[%log @ ~])
-=/  in-sum  (mk-subs sum ,[%sum *])
-=/  out-log  (mk-pubs log ?([%log *] [%other-log ~]))
-=/  out-sum  (mk-pubs sum ,[%sum %foo ~])
+=/  sub-log  (mk-subs log ,[%log @ ~])
+=/  sub-sum  (mk-subs sum ,[%sum *])
+=/  pub-log  (mk-pubs log ?([%log *] [%other-log ~]))
+=/  pub-sum  (mk-pubs sum ,[%sum %foo ~])
 ::
 |_  =bowl:gall
 +*  this  .
-    da-in-log   =/  da  (da log ,[%log @ ~])
-                ~(. da in-log bowl -:!>(*result:da) -:!>(*from:da))
+    da-sub-log   =/  da  (da log ,[%log @ ~])
+                ~(. da sub-log bowl -:!>(*result:da) -:!>(*from:da))
 ::
-    da-in-sum   =/  da  (da sum ,[%sum *])
-                ~(. da in-sum bowl -:!>(*result:da) -:!>(*from:da))
+    da-sub-sum   =/  da  (da sum ,[%sum *])
+                ~(. da sub-sum bowl -:!>(*result:da) -:!>(*from:da))
 ::
-    du-out-log  =/  du  (du log ?([%log *] [%other-log ~]))
-                ~(. du out-log bowl -:!>(*result:du))
+    du-pub-log  =/  du  (du log ?([%log *] [%other-log ~]))
+                ~(. du pub-log bowl -:!>(*result:du))
 ::
-    du-out-sum  =/  du  (du sum ,[%sum %foo ~])
-                ~(. du out-sum bowl -:!>(*result:du))
+    du-pub-sum  =/  du  (du sum ,[%sum %foo ~])
+                ~(. du pub-sum bowl -:!>(*result:du))
 ::
 ++  on-init  `this
-++  on-save  !>([in-log in-sum out-log out-sum])
+++  on-save  !>([sub-log sub-sum pub-log pub-sum])
 ++  on-load  _`this
 ::  |=  =vase
-::  =/  old  !<([=_in-log =_in-sum =_out-log] vase)
-::  `this(in-log in-log.old, in-sum in-sum.old, out-log out-log.old)
+::  =/  old  !<([=_sub-log =_sub-sum =_pub-log =_pub-sum] vase)
+::  `this(sub-log sub-log.old, sub-sum.old, pub-log pub-log.old)
 ::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
-  ~&  >>  "in-log was: {<read:da-in-log>}"
-  ~&  >>  "out-log was: {<read:du-out-log>}"
-  ~&  >>  "in-sum was: {<read:da-in-sum>}"
-  ~&  >>  "out-sum was: {<read:du-out-sum>}"
+  ~&  >>  "sub-log was: {<read:da-sub-log>}"
+  ~&  >>  "pub-log was: {<read:du-pub-log>}"
+  ~&  >>  "sub-sum was: {<read:da-sub-sum>}"
+  ~&  >>  "pub-sum was: {<read:du-pub-sum>}"
   ?-    mark
       %noun  `this
       %add
-    =.  out-sum  (give:du-out-sum !<([[%sum %foo ~] @ud] vase))
-    ~&  >  "out-sum is: {<read:du-out-sum>}"
-    `this
+    =^  cards  pub-sum  (give:du-pub-sum !<([[%sum %foo ~] @ud] vase))
+    ~&  >  "pub-sum is: {<read:du-pub-sum>}"
+    [cards this]
   ::
       %log
-    =.  out-log  (give:du-out-log !<([?([%log *] [%other-log ~]) cord] vase))
-    ~&  >  "out-log is: {<read:du-out-log>}"
-    `this
+    =^  cards  pub-log  (give:du-pub-log !<([?([%log *] [%other-log ~]) cord] vase))
+    ~&  >  "pub-log is: {<read:du-pub-log>}"
+    [cards this]
   ::
       %surf-log
     :_  this
-    ~[(surf:da-in-log !<(@p (slot 2 vase)) %simple !<([%log @ ~] (slot 3 vase)))]
+    ~[(surf:da-sub-log !<(@p (slot 2 vase)) %simple !<([%log @ ~] (slot 3 vase)))]
   ::
       %surf-sum
     :_  this
-    ~[(surf:da-in-sum !<(@p (slot 2 vase)) %simple !<([%sum *] (slot 3 vase)))]
+    ~[(surf:da-sub-sum !<(@p (slot 2 vase)) %simple !<([%sum *] (slot 3 vase)))]
   ::
       %rule-log
-    =.  out-log  (rule:du-out-log !<($%([[%log *] @ud @ud] [[%other-log ~] @ud @ud]) vase))
-    ~&  >  "out-log is: {<read:du-out-log>}"
+    =.  pub-log  (rule:du-pub-log !<($%([[%log *] @ud @ud] [[%other-log ~] @ud @ud]) vase))
+    ~&  >  "pub-log is: {<read:du-pub-log>}"
     `this
   ::
       %rule-sum
-    =.  out-sum  (rule:du-out-sum !<([[%sum %foo ~] @ud @ud] vase))
-    ~&  >  "out-sum is: {<read:du-out-sum>}"
+    =.  pub-sum  (rule:du-pub-sum !<([[%sum %foo ~] @ud @ud] vase))
+    ~&  >  "pub-sum is: {<read:du-pub-sum>}"
     `this
   ::
       %wipe-log
-    =.  out-log  (wipe:du-out-log !<(?([%log *] [%other-log ~]) vase))
-    ~&  >  "out-log is: {<read:du-out-log>}"
+    =.  pub-log  (wipe:du-pub-log !<(?([%log *] [%other-log ~]) vase))
+    ~&  >  "pub-log is: {<read:du-pub-log>}"
     `this
   ::
       %sss-on-rock
-    ?-    msg=!<($%(from:da-in-log from:da-in-sum) (fled vase))
+    ?-    msg=!<($%(from:da-sub-log from:da-sub-sum) (fled vase))
         [[%log * ~] *]
-      ~&  "last message from {<from.msg>} on {<src.msg>} is {<,.-.rock.msg>}"
-      ?<  =(-.rock.msg 'crash')
+      ~?  ?=(^ rock.msg)
+        "last message from {<from.msg>} on {<src.msg>} is {<,.-.rock.msg>}"
+      ?<  ?=([%crash *] rock.msg)
       `this
     ::
         [[%sum *] *]
@@ -86,22 +87,26 @@
     ==
   ::
       %sss-to-pub
-    :_  this
-    ?-  msg=!<($%(into:du-out-log into:du-out-sum) (fled vase))
-      [[%sum %foo ~] *]   ~[(apply:du-out-sum msg)]
-      *                   ~[(apply:du-out-log msg)]
+    ?-  msg=!<($%(into:du-pub-log into:du-pub-sum) (fled vase))
+        [[%sum %foo ~] *]
+      =^  cards  pub-sum  (apply:du-pub-sum msg)
+      [cards this]
+    ::
+        *
+      =^  cards  pub-log  (apply:du-pub-log msg)
+      [cards this]
     ==
   ::
       *
-    ?-    msg=!<($%(into:da-in-log into:da-in-sum) (fled vase))
+    ?-    msg=!<($%(into:da-sub-log into:da-sub-sum) (fled vase))
         [[%log * ~] *]
-      =^  cards  in-log  (apply:da-in-log msg)
-      ~&  >  "in-log is: {<read:da-in-log>}"
+      =^  cards  sub-log  (apply:da-sub-log msg)
+      ~&  >  "sub-log is: {<read:da-sub-log>}"
       [cards this]
     ::
         [[%sum *] *]
-      =^  cards  in-sum  (apply:da-in-sum msg)
-      ~&  >  "in-sum is: {<read:da-in-sum>}"
+      =^  cards  sub-sum  (apply:da-sub-sum msg)
+      ~&  >  "sub-sum is: {<read:da-sub-sum>}"
       [cards this]
     ==
   ==
@@ -114,22 +119,26 @@
   %-  (slog u.p.sign)
   ?+    wire   `this
       [~ %sss %on-rock @ @ @ %log @ ~]
-    =.  in-log  (chit:da-in-log |3:wire sign)
-    ~&  >  "in-log is: {<read:da-in-log>}"
+    =.  sub-log  (chit:da-sub-log |3:wire sign)
+    ~&  >  "sub-log is: {<read:da-sub-log>}"
     `this
   ::
       [~ %sss %on-rock @ @ @ %sum *]
-    =.  in-sum  (chit:da-in-sum |3:wire sign)
-    ~&  >  "in-sum is: {<read:da-in-sum>}"
+    =.  sub-sum  (chit:da-sub-sum |3:wire sign)
+    ~&  >  "sub-sum is: {<read:da-sub-sum>}"
     `this
   ==
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
-  :_  this
-  ?+  wire  ~
-    [~ %sss %behn @ @ %log @ ~]  (behn:da-in-log |3:wire)
-    [~ %sss %behn @ @ %sum *]    (behn:da-in-sum |3:wire)
+  ?+    wire  `this
+      [~ %sss %sub %behn @ @ @ %sum *]    [(behn:da-sub-sum |4:wire) this]
+      [~ %sss %sub %behn @ @ @ %log @ ~]  [(behn:da-sub-log |4:wire) this]
+      [~ %sss %pub %behn @ @ @ %sum %foo ~]
+    `this(pub-sum (behn:du-pub-sum |4:wire))
+  ::
+      [~ %sss %pub %behn @ @ @ ?([%log *] [%other-log ~])]
+    `this(pub-log (behn:du-pub-log |4:wire))
   ==
 ::
 ++  on-peek   _~
