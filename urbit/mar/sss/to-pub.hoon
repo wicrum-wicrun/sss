@@ -1,12 +1,12 @@
 /-  *sss
-|_  =request:poke
+|_  =(request:poke)
 ++  grow
   |%
   ++  noun  request
   --
 ++  grab
   |%
-  ++  noun  request:poke
+  ++  noun  (request:poke)
   --
 ++  grad  %noun
 --
