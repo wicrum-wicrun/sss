@@ -354,24 +354,16 @@
     `this
   ==
 ::
-::  Finally, the SSS library also uses `+on-arvo` to keep track of behn timers.
-::  The wires here look very similar to the ones in `+on-agent`, but since both
-::  subscriptions and publications use timers, there's an extra element in the
-::  wire, indicating whether you should dispatch to `+behn:da` or `+behn:du`.
-::  Since there's an extra element, you also need to strip four elements instead
-::  of three, so use `|4`.
+::  Finally, subscribers also uses `+on-arvo` to keep track of behn timers. The
+::  wires here look like the ones in `+on-agent`, and are dispatched to
+::  `+behn:da` in the same way (i.e. remember to use `|3`.
 ::
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
-  ?+    wire  `this
-      [~ %sss %sub %behn @ @ @ %sum *]  [(behn:da-sub-sum |4:wire) this]
-      [~ %sss %sub %behn @ @ @ %log ~]  [(behn:da-sub-log |4:wire) this]
-      [~ %sss %pub %behn @ @ @ %sum %foo ~]
-    `this(pub-sum (behn:du-pub-sum |4:wire))
-  ::
-      [~ %sss %pub %behn @ @ @ ?([%log *] [%other-log ~])]
-    `this(pub-log (behn:du-pub-log |4:wire))
+  ?+  wire  `this
+    [~ %sss %behn @ @ @ %sum *]  [(behn:da-sub-sum |3:wire) this]
+    [~ %sss %behn @ @ @ %log ~]  [(behn:da-sub-log |3:wire) this]
   ==
 ::
 ++  on-peek   _~
