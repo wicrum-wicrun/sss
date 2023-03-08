@@ -41,6 +41,14 @@
 ::    prototype. It should be the name of the lake file.
 ::
 ::  NOTE: The publisher and all subscribers need to share the exact same `lake`!
+::  NOTE: Each one needs to be distributed as a mar file: mar/<name:lake>/hoon.
+::  NOTE: That can be created this way:
+::  
+::  /-  log
+::  /+  *sss
+::  (mk-mar log)
+::
+:::::::::::::::::::
 ::
 ::  In this demo, `lake`s are stored in /sur:
 /-  sum, log
