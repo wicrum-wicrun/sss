@@ -40,18 +40,19 @@
 ::  - `name` is not conceptually part of the `lake` but has to be there for this
 ::    prototype. It should be the name of the lake file.
 ::
-::  NOTE: The publisher and all subscribers need to share the exact same `lake`!
-::  NOTE: Each one needs to be distributed as a mar file: mar/<name:lake>/hoon.
-::  NOTE: That can be created this way:
-::  
-::  /-  log
-::  /+  *sss
-::  (mk-mar log)
-::
 :::::::::::::::::::
 ::
 ::  In this demo, `lake`s are stored in /sur:
 /-  sum, log
+::  NOTE: The publisher and all subscribers need to share the exact same `lake`!
+::
+::  Each lake also has to have a matching mar file: mar/<name:lake>/hoon.
+::  It can be automatically generated this way:
+::::::::::::::::::
+::  /-  log
+::  /+  *sss
+::  (mk-mar log)
+::::::::::::::::::
 ::
 ::  We also import the sss library itself from /lib:
 /+  verb, dbug, *sss
