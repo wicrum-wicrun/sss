@@ -21,6 +21,7 @@
 ::  boilerplate -- but it does give us a chance to see how ergonomic this
 ::  programming is in practice.
 ::
+::  
 ::  USAGE
 ::
 ::  In order to replicate a particular kind of state, we need a `lake`.
@@ -95,20 +96,20 @@
     ::  Second, you call them as a door, with the following sample:
     ::  - the data structure they should manage (the ones from above),
     ::  - your agent's bowl
-    ::  - two types (for `da`) or one type (for `du`) that they can't create
+    ::  - three types (for `da`) or one type (for `du`) that they can't create
     ::    themselves (due to wetness).
     ::
-    da-sub-log  =/  da  (da log ,[%log ~])
-                ~(. da sub-log bowl -:!>(*result:da) -:!>(*from:da))
+    da-log  =/  da  (da log ,[%log ~])
+            (da sub-log bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ::
-    da-sub-sum  =/  da  (da sum ,[%sum *])
-                ~(. da sub-sum bowl -:!>(*result:da) -:!>(*from:da))
+    da-sum  =/  da  (da sum ,[%sum *])
+            (da sub-sum bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
 ::
-    du-pub-log  =/  du  (du log ?([%log *] [%other-log ~]))
-                ~(. du pub-log bowl -:!>(*result:du))
+    du-log  =/  du  (du log ?([%log *] [%other-log ~]))
+            (du pub-log bowl -:!>(*result:du))
 ::
-    du-pub-sum  =/  du  (du sum ,[%sum %foo ~])
-                ~(. du pub-sum bowl -:!>(*result:du))
+    du-sum  =/  du  (du sum ,[%sum %foo ~])
+            (du pub-sum bowl -:!>(*result:du))
 ::
 ++  on-init  `this
 ::
@@ -118,8 +119,8 @@
 ++  on-save  !>([sub-log sub-sum pub-log pub-sum])
 ++  on-load
   |=  =vase
-  =/  old  !<([=_sub-log =_sub-sum =_pub-log =_pub-sum] vase)
   :-  ~
+  =/  old  !<([=_sub-log =_sub-sum =_pub-log =_pub-sum] vase)
   %=  this
     sub-log  sub-log.old
     sub-sum  sub-sum.old
@@ -155,12 +156,16 @@
   ::
   ::  For `+read:da`, the type is `(map [ship dude path] [fail=? rock:lake])`,
   ::  where:
-  ::  - `ship` is the ship the state is coming from,
-  ::  - `dude` is the agent the state is coming from,
+  ::  - `ship` is the ship the state is coming from.
+  ::  - `dude` is the agent the state is coming from.
   ::  - `path` is the path the state is coming on -- specifically, it will be of
-  ::    the path-as-mold that was passed to `da`,
-  ::  - `fail` indicates whether we crashed while processing the latest state
-  ::    update, and
+  ::    the path-as-mold that was passed to `da`.
+  ::  - `fail` indicates whether we crashed while getting notified about the
+  ::    current state. Note that this is not any kind of system-level failure!
+  ::    Your agent simply crashed while getting notified of a new state. This is
+  ::    fine and allowed! It will still have that state available (until the
+  ::    next one replaces it). The failure flag is strictly for your own
+  ::    bookkeeping, and most agents wont care about this information. 
   ::  -  `rock:lake` is the current state.
   ::
   ::  For `+read:du`, the type is `(map path rock:lake)`, where:
@@ -169,41 +174,87 @@
   ::  - `rock:lake` is the current state we have published.
   ::
   ::  Here, for example:
-  ::  - `read:da-sub-sum` is of type `(map [ship dude [%sum *]] [? rock:sum])`
-  ::  - `read:du-pub-log` is of type `(map ?([%log *] [%other-log ~]) rock:log)`
+  ::  - `read:da-sum` is of type `(map [ship dude [%sum *]] [? rock:sum])`
+  ::  - `read:du-log` is of type `(map ?([%log *] [%other-log ~]) rock:log)`
   ::
-  ~&  >>  "sub-log was: {<read:da-sub-log>}"
-  ~&  >>  "pub-log was: {<read:du-pub-log>}"
-  ~&  >>  "sub-sum was: {<read:da-sub-sum>}"
-  ~&  >>  "pub-sum was: {<read:du-pub-sum>}"
+  ~&  >>  "sub-log was: {<read:da-log>}"
+  ~&  >>  "pub-log was: {<read:du-log>}"
+  ~&  >>  "sub-sum was: {<read:da-sum>}"
+  ~&  >>  "pub-sum was: {<read:du-sum>}"
   ?+    mark  `this
     ::
     ::  Here we use `+give:du` to publish a wave through the `sum`-publication,
     ::  using the only possible path, `/sum/foo`. Think of this as analogous to
     ::  current `[%give %fact paths cage]` cards.
       %add
-    =^  cards  pub-sum  (give:du-pub-sum !<([[%sum %foo ~] @ud] vase))
-    ~&  >  "pub-sum is: {<read:du-pub-sum>}"
+    =^  cards  pub-sum  (give:du-sum [%sum %foo ~] !<(@ud vase))
+    ~&  >  "pub-sum is: {<read:du-sum>}"
     [cards this]
   ::
   ::  Here we also use `+give:du`, but on the `log`-publication.
       %log
     =^  cards  pub-log
-      (give:du-pub-log !<([?([%log *] [%other-log ~]) cord] vase))
-    ~&  >  "pub-log is: {<read:du-pub-log>}"
+      (give:du-log !<([?([%log *] [%other-log ~]) cord] vase))
+    ~&  >  "pub-log is: {<read:du-log>}"
     [cards this]
   ::
   ::  This uses `+surf:da` to open a new `log`-subscription. The head of the
   ::  sample is the ship to subscribe to, followed by the agent and then finally
   ::  the path, which must nest under the paths passed to `da`.
       %surf-log
-    :_  this
-    ~[(surf:da-sub-log !<(@p (slot 2 vase)) %simple !<([%log ~] (slot 3 vase)))]
+    =^  cards  sub-log  
+      (surf:da-log !<(@p (slot 2 vase)) %simple !<([%log ~] (slot 3 vase)))
+    ~&  >  "sub-log is: {<read:da-log>}"
+    [cards this]
   ::
   ::  This again uses `+surf:da` but on a `sum`-subscription.
       %surf-sum
-    :_  this
-    ~[(surf:da-sub-sum !<(@p (slot 2 vase)) %simple !<([%sum *] (slot 3 vase)))]
+    =^  cards  sub-sum
+      (surf:da-sum !<(@p (slot 2 vase)) %simple !<([%sum *] (slot 3 vase)))
+    ~&  >  "sub-sum is: {<read:da-sum>}"
+    [cards this]
+  ::
+      %quit-log
+    =.  sub-log
+      (quit:da-log !<(@p (slot 2 vase)) %simple !<([%log ~] (slot 3 vase)))
+    ~&  >  "sub-log is: {<read:da-log>}"
+    `this
+  ::
+      %quit-sum
+    =.  sub-sum
+      (quit:da-sum !<(@p (slot 2 vase)) %simple !<([%sum *] (slot 3 vase)))
+    ~&  >  "sub-sum is: {<read:da-sum>}"
+    `this
+  ::
+      %allow-sum
+    =.  pub-sum  (allow:du-sum !<((list ship) vase) [%sum %foo ~]~)
+    ~&  >  "pub-sum is: {<read:du-sum>}"
+    `this
+  ::
+      %block-sum
+    =.  pub-sum  (block:du-sum !<((list ship) vase) [%sum %foo ~]~)
+    ~&  >  "pub-sum is: {<read:du-sum>}"
+    `this
+  ::
+      %public-sum
+    =.  pub-sum  (public:du-sum [%sum %foo ~]~)
+    ~&  >  "pub-sum is: {<read:du-sum>}"
+    `this
+  ::
+      %secret-sum
+    =.  pub-sum  (secret:du-sum [%sum %foo ~]~)
+    ~&  >  "pub-sum is: {<read:du-sum>}"
+    `this
+  ::
+      %kill-sum
+    =.  pub-sum  (kill:du-sum [%sum %foo ~]~)
+    ~&  >  "pub-sum is: {<read:du-sum>}"
+    `this
+  ::
+      %live-sum
+    =.  pub-sum  (live:du-sum [%sum %foo ~]~)
+    ~&  >  "pub-sum is: {<read:du-sum>}"
+    `this
   ::
   ::  This uses `+rule:du` in order to set a new retention policy for a state
   ::  published on a particular path. The arguments here are:
@@ -233,29 +284,45 @@
   ::  There may always be one rock stored, to allow new subscribers to catch up.
       %rule-log
     =.  pub-log
-      (rule:du-pub-log !<($%([[%log *] @ud @ud] [[%other-log ~] @ud @ud]) vase))
-    ~&  >  "pub-log is: {<read:du-pub-log>}"
+      (rule:du-log !<($%([[%log *] @ud @ud] [[%other-log ~] @ud @ud]) vase))
+    ~&  >  "pub-log is: {<read:du-log>}"
     `this
   ::
   ::  Same as above, but for `sum`.
       %rule-sum
-    =.  pub-sum  (rule:du-pub-sum !<([[%sum %foo ~] @ud @ud] vase))
-    ~&  >  "pub-sum is: {<read:du-pub-sum>}"
+    =.  pub-sum  (rule:du-sum !<([[%sum %foo ~] @ud @ud] vase))
+    ~&  >  "pub-sum is: {<read:du-sum>}"
     `this
   ::
   ::  Here, we use `+wipe:du` to completely clear out old waves and rocks. Only
   ::  the most recent rock is kept.
       %wipe-log
-    =.  pub-log  (wipe:du-pub-log !<(?([%log *] [%other-log ~]) vase))
-    ~&  >  "pub-log is: {<read:du-pub-log>}"
+    =.  pub-log  (wipe:du-log !<(?([%log *] [%other-log ~]) vase))
+    ~&  >  "pub-log is: {<read:du-log>}"
     `this
   ::
-  ::  Below is one of the marks that the SSS library will poke your agent with.
-  ::  Specifically, an agent will get poked with this mark when a state it's
-  ::  subscribed to changes. It's not strictly necessary to handle this, but
-  ::  if you don't, the `fail` flag in `+read:da` will be `%.y`.
+      %wipe-sum
+    =.  pub-sum  (wipe:du-sum [%sum %foo ~])
+    ~&  >  "pub-sum is: {<read:du-sum>}"
+    `this
   ::
-  ::  To handle these pokes, you need to do two things:
+  ::  Below is `%sss-on-rock`, which is one of the marks that the SSS library
+  ::  will poke your agent with. Specifically, your agent will get poked with
+  ::  this mark when a state it's subscribed to changes.
+  ::
+  ::  It's completely optional to handle `%sss-on-rock` pokes! The most recent
+  ::  state will always be available (using `+read:da`) regardless of whether
+  ::  you do. This is only present to give your agent a chance to react to an
+  ::  updated state.
+  ::
+  ::  *If* you crash during one of these pokes, this will be recorded in the
+  ::  map returned by `+read:da` -- specifically, the flag accompanying the
+  ::  current rock will get set to `%.y`. During `%sss-on-rock` pokes, the flag
+  ::  will always be `%.n`, since your agent did not crash yet. Note again that
+  ::  this flag doesn't have any system-level consequence! It's strictly offered
+  ::  as a bookkeeping service that your agent can choose to ignore.
+  ::
+  ::  If you want to handle these pokes, you need to do two things:
   ::  1. Run `+fled` on the incoming vase, and pass it to `!<`,
   ::  2. using a mold that's constructed as a tagged union ($%) of all your
   ::     subscriptions' on-rock molds, accessed using `$from:da`. 
@@ -268,7 +335,7 @@
   ::  a `unit` because if the agent is starting from a snapshot, there won't be
   ::  a `$wave` available.
       %sss-on-rock
-    ?-    msg=!<($%(from:da-sub-log from:da-sub-sum) (fled vase))
+    ?-    msg=!<($%(from:da-log from:da-sum) (fled vase))
         [[%log ~] *]
       ~?  ?=(^ rock.msg)
         "last message from {<from.msg>} on {<src.msg>} is {<,.-.rock.msg>}"
@@ -280,6 +347,11 @@
       ~&  "sum from {<from.msg>} on {<src.msg>} is 42"  ::NOTE src.msg not src.bowl!
       `this
     ==
+  ::
+      %sss-surf-fail
+    =/  msg  !<($%(fail:da-log fail:da-sum) (fled vase))
+    ~&  >>>  "not allowed to surf on {<msg>}!"
+    `this
   ::
   ::  Below is the `%sss-to-pub` poke, which any agent that uses the SSS library
   ::  *must* handle *without* crashing in order for the library to function.
@@ -294,13 +366,13 @@
   ::     as well as gathering resulting cards. Return these cards and your agent.
   ::
       %sss-to-pub
-    ?-  msg=!<($%(into:du-pub-log into:du-pub-sum) (fled vase))
+    ?-  msg=!<($%(into:du-log into:du-sum) (fled vase))
         [[%sum %foo ~] *]
-      =^  cards  pub-sum  (apply:du-pub-sum msg)
+      =^  cards  pub-sum  (apply:du-sum msg)
       [cards this]
     ::
         *
-      =^  cards  pub-log  (apply:du-pub-log msg)
+      =^  cards  pub-log  (apply:du-log msg)
       [cards this]
     ==
   ::
@@ -310,8 +382,8 @@
   ::  %sss-sum is explained below, but %sss-log is completely analogous.
   ::
       %sss-log
-    =^  cards  sub-log  (apply:da-sub-log !<(into:da-sub-log (fled vase)))
-    ~&  >  "sub-log is: {<read:da-sub-log>}"
+    =^  cards  sub-log  (apply:da-log !<(into:da-log (fled vase)))
+    ~&  >  "sub-log is: {<read:da-log>}"
     [cards this]
   ::
   ::  We handle %sss-sum in the following way:
@@ -323,8 +395,8 @@
   ::     Return these cards and your agent.
   ::
       %sss-sum
-    =^  cards  sub-sum  (apply:da-sub-sum !<(into:da-sub-sum (fled vase)))
-    ~&  >  "sub-sum is: {<read:da-sub-sum>}"
+    =^  cards  sub-sum  (apply:da-sum !<(into:da-sum (fled vase)))
+    ~&  >  "sub-sum is: {<read:da-sum>}"
     [cards this]
   ==
 ::
@@ -353,14 +425,24 @@
   %-  (slog u.p.sign)
   ?+    wire   `this
       [~ %sss %on-rock @ @ @ %log ~]
-    =.  sub-log  (chit:da-sub-log |3:wire sign)
-    ~&  >  "sub-log is: {<read:da-sub-log>}"
+    =.  sub-log  (chit:da-log |3:wire sign)
+    ~&  >  "sub-log is: {<read:da-log>}"
     `this
   ::
       [~ %sss %on-rock @ @ @ %sum *]
-    =.  sub-sum  (chit:da-sub-sum |3:wire sign)
-    ~&  >  "sub-sum is: {<read:da-sub-sum>}"
+    =.  sub-sum  (chit:da-sum |3:wire sign)
+    ~&  >  "sub-sum is: {<read:da-sum>}"
     `this
+  ::
+      [~ %sss %scry-request @ @ @ %log ~]
+    =^  cards  sub-log  (tell:da-log |3:wire sign)
+    ~&  >  "sub-log is: {<read:da-log>}"
+    [cards this]
+  ::
+      [~ %sss %scry-request @ @ @ %sum *]
+    =^  cards  sub-sum  (tell:da-sum |3:wire sign)
+    ~&  >  "sub-sum is: {<read:da-sum>}"
+    [cards this]
   ==
 ::
 ::  Finally, subscribers also uses `+on-arvo` to keep track of behn timers. The
@@ -371,8 +453,8 @@
   |=  [=wire sign=sign-arvo]
   ^-  (quip card:agent:gall _this)
   ?+  wire  `this
-    [~ %sss %behn @ @ @ %sum *]  [(behn:da-sub-sum |3:wire) this]
-    [~ %sss %behn @ @ @ %log ~]  [(behn:da-sub-log |3:wire) this]
+    [~ %sss %behn @ @ @ %sum *]  [(behn:da-sum |3:wire) this]
+    [~ %sss %behn @ @ @ %log ~]  [(behn:da-log |3:wire) this]
   ==
 ::
 ++  on-peek   _~
