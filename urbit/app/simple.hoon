@@ -137,6 +137,8 @@
 ::    Information to be handled by a du-core (i.e. a publication).
 ::  - %sss-<lake> (e.g. %sss-log or %sss-sum)
 ::    Information to be handled by a da-core (i.e. a subscription).
+::  - %sss-surf-fail
+::    Received whenever you try to subscribe without being allowed.
 ::
 ::  We will go through all of these below.
 ::
@@ -348,11 +350,6 @@
       `this
     ==
   ::
-      %sss-surf-fail
-    =/  msg  !<($%(fail:da-log fail:da-sum) (fled vase))
-    ~&  >>>  "not allowed to surf on {<msg>}!"
-    `this
-  ::
   ::  Below is the `%sss-to-pub` poke, which any agent that uses the SSS library
   ::  *must* handle *without* crashing in order for the library to function.
   ::  THIS IS PURE BOILERPLATE. Do not do anything interesting here.
@@ -398,6 +395,18 @@
     =^  cards  sub-sum  (apply:da-sum !<(into:da-sum (fled vase)))
     ~&  >  "sub-sum is: {<read:da-sum>}"
     [cards this]
+  ::
+  ::  You'll receive an `%sss-surf-fail` poke whenever you tried to subscribe to
+  ::  a secret path which you don't have permissions to read (or a path that
+  ::  the publisher isn't publishing on, as these are indistinguishable to you).
+  ::
+  ::  YOU DON'T HAVE TO HANDLE THIS POKE!
+  ::  But if you want to do it, you probably recognize the pattern by now.
+  ::  The message will contain `[path ship dude]`.
+      %sss-surf-fail
+    =/  msg  !<($%(fail:da-log fail:da-sum) (fled vase))
+    ~&  >>>  "not allowed to surf on {<msg>}!"
+    `this
   ==
 ::
 ::  Apart from `+on-poke`, the SSS library also uses `+on-agent` to keep track
