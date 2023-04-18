@@ -258,6 +258,16 @@
     ~&  >  "pub-sum is: {<read:du-sum>}"
     `this
   ::
+      %fork-log
+    =.  pub-log  (fork:du-log !<([[%log *] [%log *]] vase))
+    ~&  >  "pub-log is: {<read:du-log>}"
+    `this
+  ::
+      %copy-log
+    =.  pub-log  (copy:du-log sub-log [our dap [%log ~]]:bowl !<([%log *] vase))
+    ~&  >  "pub-log is: {<read:du-log>}"
+    `this
+  ::
   ::  This uses `+rule:du` in order to set a new retention policy for a state
   ::  published on a particular path. The arguments here are:
   ::  1. The path,

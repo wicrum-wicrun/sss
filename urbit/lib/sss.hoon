@@ -202,6 +202,7 @@
   =*  rok  ((on aeon rock:lake) gte)
   =*  wav  ((on aeon wave:lake) lte)
   |%
+  ::
   ++  rule                                   ::  Set new retention policy.
     |=  [path=paths =^rule]
     ^-  pubs
@@ -240,6 +241,23 @@
     =.  mem.tide  ~
     ?.  =(next (add aeon.last waves.rul.tide))  buoy
     buoy(tid (form tide))
+  ::
+  ++  fork                                   ::  Fork a pub into an empty path.
+    |=  [from=paths to=paths]
+    ^-  pubs
+    :-  %0
+    ?<  (~(has by pub) to)
+    (~(put by pub) to (~(got by pub) from))
+  ::
+  ++  copy                                   ::  Fork a sub into an empty path.
+    |=  [sub=_(mk-subs lake *) from=[ship dude *] to=paths]
+    ^-  pubs
+    :-  %0
+    ?<  (~(has by pub) to)
+    %+  ~(put by pub)  to
+    %*  .  *$<(aeon buoy)
+      rok.tid  (put:rok ~ [aeon rock]:(need (~(got by +:sub) from)))
+    ==
   ::
   ++  perm                                   ::  Change permissions with gate.
     |=  [where=(list paths) diff=$-((unit (set ship)) (unit (set ship)))]
