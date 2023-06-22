@@ -253,11 +253,6 @@
     ~&  >  "pub-sum is: {<read:du-sum>}"
     `this
   ::
-      %live-sum
-    =.  pub-sum  (live:du-sum [%sum %foo ~]~)
-    ~&  >  "pub-sum is: {<read:du-sum>}"
-    `this
-  ::
       %fork-log
     =.  pub-log  (fork:du-log !<([[%log *] [%log *]] vase))
     ~&  >  "pub-log is: {<read:du-log>}"
@@ -439,9 +434,6 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card:agent:gall _this)
-  ?>  ?=(%poke-ack -.sign)
-  ?~  p.sign  `this
-  %-  (slog u.p.sign)
   ?+    wire   `this
       [~ %sss %on-rock @ @ @ %log ~]
     =.  sub-log  (chit:da-log |3:wire sign)
@@ -462,59 +454,20 @@
     =^  cards  sub-sum  (tell:da-sum |3:wire sign)
     ~&  >  "sub-sum is: {<read:da-sum>}"
     [cards this]
+  ::
+      [~ %sss %scry-response @ @ @ %log ~]
+    =^  cards  pub-log  (tell:du-log |3:wire sign)
+    ~&  >  "pub-log is: {<read:du-log>}"
+    [cards this]
+  ::
+      [~ %sss %scry-response @ @ @ %sum %foo ~]
+    =^  cards  pub-sum  (tell:du-sum |3:wire sign)
+    ~&  >  "pub-sum is: {<read:du-sum>}"
+    [cards this]
   ==
-::
-::  Finally, subscribers also uses `+on-arvo` to keep track of behn timers. The
-::  wires here look like the ones in `+on-agent`, and are dispatched to
-::  `+behn:da` in the same way (i.e. remember to use `|3`.
-::
-++  on-arvo
-  |=  [=wire sign=sign-arvo]
-  ^-  (quip card:agent:gall _this)
-  ?+  wire  `this
-    [~ %sss %behn @ @ @ %sum *]  [(behn:da-sum |3:wire) this]
-    [~ %sss %behn @ @ @ %log ~]  [(behn:da-log |3:wire) this]
-  ==
-::
+++  on-arvo   _`this
 ++  on-peek   _~
 ++  on-watch  _`this
 ++  on-leave  _`this
 ++  on-fail   _`this
 --
-::
-::  USING SSS IN PROD (by ~dilryd-mopreg)
-::
-::  Because the current version of the library is implemented with pokes which
-::  imitate remote scry via Ames, the Arvo event loop is being hit a lot,
-::  causing big performance issues in large networks of ships.
-::
-::  Here is a description of:
-::  1. what is happening
-::  2. the issues we encountered implementing it in %portal
-::  3. how to fix it
-::
-::  1.
-::  The publisher keeps a log of all subscribers to which he sends the content
-::  to. Specifically, the subscriber pokes the publisher every 25s to let him 
-::  know he is still interested in the published content. If the publisher
-::  doesn't receive that poke, the subscriber will be removed from the log and 
-::  won't be receiving diffs anymore.
-::
-::  2.
-::  What happens if we take 300 subscribers and 5 published paths? That's
-::  300 pokes / 25s * 5 = 60 pokes/s. Obviously, this is not scalable. We were
-::  getting 100% CPU usage on ships with %portal installed, simply because they
-::  were having ~300 subscribers.
-::  
-::  3.
-::  To solve the problem is actually quite simple. We increase the 25s timer to
-::  something larger. At the time of this writing, we increased it to 10min, and 
-::  the CPU usage dropped immediately from 100% to something reasonable. But I
-::  see no real reason not to increase it to 1h or 1d or even more. Keeping a
-::  log of 300 subs * 10 paths doesn't seem like too much to handle. Maybe if
-::  the number goes to 10k and more we might encounter memory issues.
-::
-::  Simply go to lib/sss/hoon and replace the `~s25` with `~m10`, or whichever
-::  timer you prefer. Make sure you change it in 2 places, in `apply:du` and
-::  `behn-25:da`.
-::  
