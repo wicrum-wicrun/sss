@@ -229,29 +229,54 @@
     `this
   ::
       %allow-sum
-    =.  pub-sum  (allow:du-sum !<((list ship) vase) [%sum %foo ~]~)
+    =^  cards  pub-sum  (allow:du-sum !<((list ship) vase) [%sum %foo ~]~)
     ~&  >  "pub-sum is: {<read:du-sum>}"
-    `this
+    [cards this]
   ::
       %block-sum
-    =.  pub-sum  (block:du-sum !<((list ship) vase) [%sum %foo ~]~)
+    =^  cards  pub-sum  (block:du-sum !<((list ship) vase) [%sum %foo ~]~)
     ~&  >  "pub-sum is: {<read:du-sum>}"
-    `this
+    [cards this]
+  ::
+      %allow-log
+    =^  cards  pub-log  (allow:du-log !<((list ship) vase) [%log ~]~)
+    ~&  >  "pub-log is: {<read:du-log>}"
+    [cards this]
+  ::
+      %block-log
+    =^  cards  pub-log  (block:du-log !<((list ship) vase) [%log ~]~)
+    ~&  >  "pub-log is: {<read:du-log>}"
+    [cards this]
   ::
       %public-sum
-    =.  pub-sum  (public:du-sum [%sum %foo ~]~)
+    =^  cards  pub-sum  (public:du-sum [%sum %foo ~]~)
     ~&  >  "pub-sum is: {<read:du-sum>}"
-    `this
+    [cards this]
   ::
       %secret-sum
-    =.  pub-sum  (secret:du-sum [%sum %foo ~]~)
+    =^  cards  pub-sum  (secret:du-sum [%sum %foo ~]~)
     ~&  >  "pub-sum is: {<read:du-sum>}"
-    `this
+    [cards this]
+  ::
+      %public-log
+    =^  cards  pub-log  (public:du-log [%log ~]~)
+    ~&  >  "pub-log is: {<read:du-log>}"
+    [cards this]
+  ::
+      %secret-log
+    =^  cards  pub-log  (secret:du-log [%log ~]~)
+    ~&  >  "pub-log is: {<read:du-log>}"
+    [cards this]
   ::
       %kill-sum
-    =.  pub-sum  (kill:du-sum [%sum %foo ~]~)
+    =^  cards  pub-sum  (kill:du-sum [%sum %foo ~]~)
     ~&  >  "pub-sum is: {<read:du-sum>}"
-    `this
+    [cards this]
+  ::
+      %kill-log
+    =^  cards  pub-log  (kill:du-log [%log ~]~)
+    ~&  >  "pub-log is: {<read:du-log>}"
+    [cards this]
   ::
       %fork-log
     =.  pub-log  (fork:du-log !<([[%log *] [%log *]] vase))
@@ -353,6 +378,13 @@
       ?.  =(rock.msg 42)  `this
       ~&  "sum from {<from.msg>} on {<src.msg>} is 42"  ::NOTE src.msg not src.bowl!
       `this
+    ==
+  ::
+      %sss-fake-on-rock
+    :_  this
+    ?-  msg=!<($%(from:da-log from:da-sum) (fled vase))
+      [[%log ~] *]  (handle-fake-on-rock:da-log msg)
+      [[%sum *] *]  (handle-fake-on-rock:da-sum msg)
     ==
   ::
   ::  Below is the `%sss-to-pub` poke, which any agent that uses the SSS library

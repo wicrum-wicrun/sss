@@ -95,7 +95,7 @@
         [~ ~ *]
       =.  stale.u.u.flow  &
       :_  0/(~(put by sub) current u.flow)
-      ~[(on-rock-poke current u.u.flow ~)]
+      ~[(on-rock-poke fake=& current u.u.flow ~)]
     ::
         [~ ~]
       :_  0/(~(del by sub) current)  :_  ~
@@ -108,23 +108,32 @@
   ++  apply                                  ::  Handle response from publisher.
     |=  res=(response:poke lake paths)
     ^-  (quip card:agent:gall subs)
-    %-  fall  :_  `0/sub  %-  mole  |.
     =*  current  [src.bowl dude.res path.res]
     =/  old=flow  (fall (~(got by sub) current) *flow)
     ?:  ?=(%tomb what.res)
       =/  =flow  old(stale &)
       :_  0/(~(put by sub) current `flow)  :_  ~
-      (on-rock-poke current flow ~)
+      (on-rock-poke fake=& current flow ~)
     ::
-    =/  [wave=(unit wave:lake) =flow]
+    =/  [wave=(unit wave:lake) new=(unit flow)]
       ?-  what.res
-        %rock  ?>  (gte aeon.res aeon.old)
-               [~ [aeon.res | | rock.res]]
-        %wave  ?>  =(aeon.res +(aeon.old))
-               [`wave.res [aeon.res | | (wash:lake rock.old wave.res)]]
+        %rock  ?:  (lte aeon.res aeon.old)  [~ ~]
+               [~ `[aeon.res | | rock.res]]
+        %wave  ?:  (lte aeon.res aeon.old)  [~ ~]
+               ?>  =(aeon.res +(aeon.old))
+               [`wave.res `[aeon.res | | (wash:lake rock.old wave.res)]]
       ==
-    :_  0/(~(put by sub) current `flow)  :_  ~
-    (on-rock-poke current flow wave)
+    ?~  new  `0/sub
+    :_  0/(~(put by sub) current new)  :_  ~
+    (on-rock-poke fake=& current u.new wave)
+  ::
+  ++  handle-fake-on-rock
+    |=  =(on-rock:poke lake paths)
+    ^-  (list card:agent:gall)
+    ?~  flow=(~(get by sub) [src from path]:on-rock)  ~
+    ?~  u.flow  ~
+    ?.  =([stale fail rock]:u.u.flow [stale fail rock]:on-rock)  ~
+    ~[(on-rock-poke fake=| [src from path]:on-rock u.u.flow wave.on-rock)]
   ::
   ::  Non-public facing arms below
   ::
@@ -136,12 +145,13 @@
         %poke   sss-to-pub/[result-type `result`[where dap.bowl]]
     ==
   ++  on-rock-poke
-    |=  [[=ship =dude path=paths] flow wave=(unit wave:lake)]
+    |=  [fake=? [=ship =dude path=paths] flow wave=(unit wave:lake)]
     ^-  card:agent:gall
-    :*  %pass   (zoom on-rock/(scot %ud aeon)^(scot %p ship)^dude^path)
+    :*  %pass   %+  zoom  ?:(fake %fake %on-rock)
+                (scot %ud aeon)^(scot %p ship)^dude^path
         %agent  [our dap]:bowl
-        %poke   %sss-on-rock  on-rock-type  ^-  from
-        [path ship dude stale fail rock wave]
+        %poke   ?:(fake %sss-fake-on-rock %sss-on-rock)
+        on-rock-type  `from`[path ship dude stale fail rock wave]
     ==
   --
 ++  du                                       ::  Manage publications.
@@ -274,7 +284,7 @@
   ::
   ++  perm                                   ::  Change permissions with gate.
     |=  [where=(list paths) diff=$-((unit (set ship)) (unit (set ship)))]
-    ^-  pubs
+    ^-  (quip card:agent:gall pubs)
     %+  edit  where
     |=  =buoy
     =/  new=_alo.buoy  (diff alo.buoy)
@@ -290,14 +300,14 @@
   ::                                         ::  Block ships from paths.
   ++  block                                  ::  No-ops on public paths.
     |=  [who=(list ship) whence=(list paths)]
-    ^-  pubs
+    ^-  (quip card:agent:gall pubs)
     %+  perm  whence
     |=  old=(unit (set ship))
     ?~  old  ~  `(~(dif in u.old) (sy who))
   ::                                         ::  Allow ships to paths.
   ++  allow                                  ::  Any public paths will no-op.
     |=  [who=(list ship) where=(list paths)]
-    ^-  pubs
+    ^-  (quip card:agent:gall pubs)
     %+  perm  where
     |=  old=(unit (set ship))
     ?~  old  ~  `(~(gas in u.old) who)
@@ -380,12 +390,27 @@
   ::
   ++  edit
     |=  [ps=(list paths) edit=$-(buoy buoy)]
-    ^-  pubs
-    :-  %1
+    ^-  (quip card:agent:gall pubs)
     %-  ~(rep in (sy ps))
-    |=  [path=paths =_pub]
-    %-  fall  :_  pub  %-  mole  |.
-    (~(jab by pub) path edit)
+    |=  [path=paths caz=(list card:agent:gall) %1 =_pub]
+    ?~  old=(~(get by pub) path)  [caz 1/pub]
+    =/  new=buoy  (edit u.old)
+    :_  1/(~(put by pub) path new)
+    %-  weld  :_  caz
+    ^-  (list card:agent:gall)
+    ?@  tid.u.old  ~
+    ?@  tid.new
+      %-  zing
+      %+  turn  ~(tap by mem.tid.u.old)
+      |=  [=ship =(set dude)]
+      (turn ~(tap in set) |=(=dude (send tomb/~ ship dude path)))
+    ?~  alo.new  ~
+    =/  new-alo=(jug ship dude)
+      (malt (turn ~(tap in u.alo.new) (late *(set @))))
+    %-  zing
+    %+  turn  ~(tap by (~(dif by mem.tid.u.old) new-alo))
+    |=  [=ship =(set dude)]
+    (turn ~(tap in set) |=(=dude (send tomb/~ ship dude path)))
   ::
   ++  form
     |=  =tide
