@@ -291,20 +291,16 @@
   ::  This uses `+rule:du` in order to set a new retention policy for a state
   ::  published on a particular path. The arguments here are:
   ::  1. The path,
-  ::  2. `rocks=@ud`, the maximum number of extra rocks should be kept,
-  ::  3. `waves=@ud`, how many waves should pass before a new rock is made.
+  ::  2. `horizon=(unit @ud)`, after how many waves rocks should be deleted,
+  ::     if they should ever get deleted.
+  ::  3. `frequency=@ud`, how many waves should pass before a new rock is made.
+  ::
+  ::  Even if horizon is smaller than frequency, we will still keep the most
+  ::  recent rock. If horizon is null, we will never delete the oldest rock,
+  ::  but we will delete any rocks between that and the most recent.
   ::
   ::  Calling `+rule:du` will *immediately* delete superfluous rocks/waves, and
   ::  if applicable, make a new snapshot at the current aeon.
-  ::
-  ::  For example, if we previously had 5 rocks stored and 10 waves had passed
-  ::  since the previous rock and set the new policy to `[1 2]`, we would create
-  ::  a new rock at the current aeon, and then delete all the old rocks except
-  ::  for the most recent one. All the waves prior to that rock would also be
-  ::  deleted. Then, once two new waves have been given on that same path, a new
-  ::  rock will be created, and the the oldest one would be deleted, leaving
-  ::  only the rocks that were created after the new retention policy was
-  ::  enacted.
   ::
   ::  Setting `waves=0` means "don't generate rocks". Note that this does not
   ::  imply that there won't be any rocks stored! We might have had a different
@@ -312,17 +308,15 @@
   ::  rule, we still needed to keep an old rock in order to allow any new
   ::  subscribers to get up to date.
   ::
-  ::  Similarly, setting `rocks=0` means that there will be zero *extra* rocks.
-  ::  There may always be one rock stored, to allow new subscribers to catch up.
       %rule-log
     =.  pub-log
-      (rule:du-log !<($%([[%log *] @ud @ud] [[%other-log ~] @ud @ud]) vase))
+      (rule:du-log !<([?([%log *] [%other-log ~]) (unit @ud) @ud] vase))
     ~&  >  "pub-log is: {<read:du-log>}"
     `this
   ::
   ::  Same as above, but for `sum`.
       %rule-sum
-    =.  pub-sum  (rule:du-sum !<([[%sum %foo ~] @ud @ud] vase))
+    =.  pub-sum  (rule:du-sum !<([[%sum %foo ~] (unit @ud) @ud] vase))
     ~&  >  "pub-sum is: {<read:du-sum>}"
     `this
   ::
