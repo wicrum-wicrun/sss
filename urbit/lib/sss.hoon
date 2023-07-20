@@ -59,9 +59,9 @@
     |=  which=[ship dude paths]
     ^-  (quip card:agent:gall subs)
     ?+  flow=(~(get by sub) which)  `0/sub
-      ~                 [~[(pine which)] 0/(~(put by sub) which ~)]
-      [~ ~]             [~[(pine which)] 0/sub]
-      [~ ~ [* %& * *]]  [~[(pine which)] 0/sub]
+      ~                 [~[(pine ~ which)] 0/(~(put by sub) which ~)]
+      [~ ~]             [~[(pine ~ which)] 0/sub]
+      [~ ~ [* %& * *]]  [~[(pine `+(aeon.u.u.flow) which)] 0/sub]
     ==
   ++  quit  (corl (lead %0) ~(del by sub))   ::  Unsub from [ship dude path].
   ++  read                                   ::  See current subscribed states.
@@ -138,9 +138,10 @@
   ::  Non-public facing arms below
   ::
   ++  pine
-    |=  [who=ship which=dude where=paths]
+    |=  [when=(unit aeon) who=ship which=dude where=paths]
     ^-  card:agent:gall
-    :*  %pass   (zoom scry-request/(scot %p who)^which^where)
+    =/  when  ?~  when  ~  (scot %ud u.when)
+    :*  %pass   (zoom scry-request/(scot %p who)^which^when^where)
         %agent  [who which]
         %poke   sss-to-pub/[result-type `result`[where dap.bowl]]
     ==
